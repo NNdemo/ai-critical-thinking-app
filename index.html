@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Critical Thinking Tool</title>
+    <title>AI Advertising Campaign Planner</title>
 
     <!-- JointJS dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
@@ -17,6 +17,24 @@
 
     <!-- JointJS Plugins -->
     <script src="https://cdn.jsdelivr.net/npm/jointjs@3.7.5/dist/joint.layout.DirectedGraph.min.js"></script>
+
+    <!-- JointJS Extension Support -->
+    <script>
+      // Add custom utility functions
+      window.customJointUtils = {
+        // Check if image loaded successfully
+        checkImageLoaded: function(url, callback) {
+          const img = new Image();
+          img.onload = function() {
+            callback(true);
+          };
+          img.onerror = function() {
+            callback(false);
+          };
+          img.src = url;
+        }
+      };
+    </script>
 
     <!-- Vue.js (production version) -->
     <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.prod.js"></script>
@@ -95,8 +113,17 @@
         flex-direction: column;
       }
 
+      /* 确保缩略图区域始终在底部 */
       .mindmap-container {
-        flex: 1;
+        flex: 1 1 auto;
+        min-height: 0; /* 允许内容收缩 */
+      }
+
+      .thumbnails-container {
+        flex: 0 0 auto; /* 不允许缩略图区域收缩 */
+      }
+
+      .mindmap-container {
         position: relative;
         overflow: hidden;
       }
@@ -111,6 +138,18 @@
         overflow: hidden;
         display: block !important; /* 强制显示 */
         z-index: 100; /* 确保在顶层 */
+        border: 2px solid #805ad5; /* 添加显眼边框便于识别 */
+      }
+
+      /* 图像节点样式 */
+      .joint-element .joint-image {
+        filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+      }
+
+      /* 当没有图像时隐藏缩略图容器 */
+      .thumbnails-container:empty,
+      .thumbnails-container .thumbnails-scroll:empty {
+        display: none !important;
       }
 
       .thumbnails-header {
@@ -153,12 +192,17 @@
       .thumbnail-image {
         width: 100%;
         height: 100%;
+        background-color: #e2e8f0; /* 添加背景色，便于识别 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .thumbnail-image img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        border-radius: 4px;
       }
 
       .thumbnail-info {
@@ -933,17 +977,15 @@
       }
 
       .image-generate-button button {
-        background-color: #805ad5;
+        background-color: #c14665;
         color: white;
         border: none;
-        border-radius: 4px;
-        padding: 8px 12px;
-        cursor: pointer;
-        transition: background-color 0.2s;
       }
 
       .image-generate-button button:hover {
-        background-color: #6b46c1;
+        background-color: #c14665;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
       /* 生成图像结果样式 */
@@ -986,54 +1028,54 @@
     <div id="app">
       <div class="app-container">
         <header>
-          <h1>AI Critical Thinking Tool</h1>
+          <h1>AI Advertising Campaign Planner</h1>
           <div class="header-actions" v-if="!initialMode">
             <button type="button" @click="generatePathAnalysis" :disabled="isGenerating || userPath.length === 0">
-              {{ isGenerating ? '分析中...' : '分析思考路径' }}
+              {{ isGenerating ? 'Analyzing...' : 'Analyze Campaign' }}
             </button>
-            <button type="button" @click="showSavePath">保存路径</button>
-            <button type="button" @click="showLoadPath">加载路径</button>
-            <button type="button" @click="showComparePathDialog" :disabled="userPath.length === 0">比较路径</button>
-            <button type="button" @click="exportPath" :disabled="userPath.length === 0">导出</button>
-            <button type="button" @click="importPath">导入</button>
-            <button type="button" @click="showShare" :disabled="userPath.length === 0">分享</button>
-            <button type="button" @click="showComments">评论</button>
-            <button type="button" @click="showImageGenerator" class="image-btn">生成图像</button>
-            <button type="button" @click="autoLayout" class="layout-btn">自动整理</button>
+            <button type="button" @click="showSavePath">Save Campaign</button>
+            <button type="button" @click="showLoadPath">Load Campaign</button>
+            <button type="button" @click="showComparePathDialog" :disabled="userPath.length === 0">Compare Campaigns</button>
+            <button type="button" @click="exportPath" :disabled="userPath.length === 0">Export</button>
+            <button type="button" @click="importPath">Import</button>
+            <button type="button" @click="showShare" :disabled="userPath.length === 0">Share</button>
+            <button type="button" @click="showComments">Comments</button>
+            <button type="button" @click="showImageGenerator" class="image-btn">Generate Image</button>
+            <button type="button" @click="autoLayout" class="layout-btn">Auto Arrange</button>
           </div>
           <div class="header-actions" v-else>
-            <button type="button" @click="showLoadPath">加载已有思考</button>
+            <button type="button" @click="showLoadPath">Load Existing Campaign</button>
           </div>
         </header>
-        <!-- 初始输入界面 -->
+        <!-- Initial Input Interface -->
         <div v-if="initialMode" class="initial-input-wrapper">
           <div class="initial-input-container">
-            <h2>请输入您的需求或问题</h2>
+            <h2>Enter Your Advertising Campaign Brief</h2>
             <div class="input-area">
-              <textarea v-model="userInitialInput" placeholder="例如：我需要一个应用程序来管理我的日常任务和时间安排..."></textarea>
+              <textarea v-model="userInitialInput" placeholder="Example: We need a digital campaign for our new eco-friendly product line targeting millennials..."></textarea>
               <button type="button" @click="processUserInput" :disabled="processingInput">
-                {{ processingInput ? '处理中...' : '开始思考' }}
+                {{ processingInput ? 'Processing...' : 'Start Planning' }}
               </button>
             </div>
             <div class="input-tips">
-              <p>提示：请尽可能详细地描述您的需求，这将帮助我们生成更准确的思考路径。</p>
+              <p>Tip: Provide detailed information about your target audience, campaign goals, and key messages to generate a more effective campaign plan.</p>
             </div>
           </div>
         </div>
 
-        <!-- 思维导图界面 -->
+        <!-- Mind Map Interface -->
         <div v-else class="mindmap-wrapper">
           <div ref="mindmapContainer" class="mindmap-container"></div>
 
-          <!-- 缩略图区域 -->
-          <div class="thumbnails-container" v-if="generatedImages.length > 0">
+          <!-- Thumbnails Area -->
+          <div class="thumbnails-container" id="thumbnails-container">
             <div class="thumbnails-header">
-              <h4>生成的图像</h4>
+              <h4>Generated Ad Visuals</h4>
             </div>
             <div class="thumbnails-scroll">
               <div v-for="image in generatedImages" :key="image.id" class="thumbnail-item" @click="viewThumbnail(image)">
                 <div class="thumbnail-image">
-                  <img :src="image.url" :alt="'Generated image ' + image.id" :title="formatTime(image.timestamp)">
+                  <img :src="image.url" :alt="'Ad visual ' + image.id" :title="formatTime(image.timestamp)">
                 </div>
                 <div class="thumbnail-info">
                   <span class="thumbnail-date">{{ formatTime(image.timestamp).split(' ')[0] }}</span>
@@ -1056,15 +1098,15 @@
             <h3>{{ selectedNode.label }}</h3>
             <p>{{ selectedNode.details }}</p>
 
-            <!-- 节点评价输入框 -->
+            <!-- Node Rating Input -->
             <div class="node-rating">
-              <textarea v-model="nodeRating" placeholder="请评价这个节点的内容..."></textarea>
-              <button type="button" @click="saveNodeRating">提交评价</button>
+              <textarea v-model="nodeRating" placeholder="Add your feedback on this campaign element..."></textarea>
+              <button type="button" @click="saveNodeRating">Submit Feedback</button>
             </div>
 
-            <!-- 节点评价历史 -->
+            <!-- Node Rating History -->
             <div v-if="nodeRatings[selectedNode.id] && nodeRatings[selectedNode.id].length > 0" class="node-rating-history">
-              <h4>评价历史</h4>
+              <h4>Feedback History</h4>
               <div v-for="rating in nodeRatings[selectedNode.id]" :key="rating.id" class="rating-item">
                 <p>{{ rating.text }}</p>
                 <span class="rating-time">{{ formatTime(rating.timestamp) }}</span>
@@ -1079,28 +1121,28 @@
               </button>
             </div>
 
-            <!-- 思考类型按钮 -->
+            <!-- Campaign Element Type Buttons -->
             <div class="thinking-type-buttons">
               <button type="button"
                       class="thinking-type-btn"
-                      :class="{ 'active': selectedThinkingType === '根本原因' }"
-                      @click="selectThinkingType('根本原因')">根本原因</button>
+                      :class="{ 'active': selectedThinkingType === 'Target Audience' }"
+                      @click="selectThinkingType('Target Audience')">Target Audience</button>
               <button type="button"
                       class="thinking-type-btn"
-                      :class="{ 'active': selectedThinkingType === '系统影响' }"
-                      @click="selectThinkingType('系统影响')">系统影响</button>
+                      :class="{ 'active': selectedThinkingType === 'Creative Concept' }"
+                      @click="selectThinkingType('Creative Concept')">Creative Concept</button>
               <button type="button"
                       class="thinking-type-btn"
-                      :class="{ 'active': selectedThinkingType === '潜在机会' }"
-                      @click="selectThinkingType('潜在机会')">潜在机会</button>
+                      :class="{ 'active': selectedThinkingType === 'Media Strategy' }"
+                      @click="selectThinkingType('Media Strategy')">Media Strategy</button>
             </div>
 
             <div class="node-tools">
               <div v-if="showAIGenerateButton" class="ai-generate-button">
-                <button type="button" @click="showAIGenerateDialog">使用AI生成更多选项</button>
+                <button type="button" @click="showAIGenerateDialog" style="height: 100%;">Generate More Options with AI</button>
               </div>
-              <div class="image-generate-button">
-                <button type="button" @click="showImageGenerator">生成图像</button>
+              <div class="ai-generate-button image-generate-button">
+                <button type="button" @click="showImageGenerator" style="height: 100%;">Create Ad Visual</button>
               </div>
             </div>
           </div>
@@ -1108,16 +1150,16 @@
           <!-- AI Generate Prompt Dialog -->
           <div v-if="showAIGeneratePrompt" class="modal-overlay">
             <div class="modal-content">
-              <h3>生成思考选项</h3>
-              <p>请输入提示词，我们将为您生成多个思考选项。</p>
+              <h3>Generate Campaign Options</h3>
+              <p>Enter a prompt, and we'll generate multiple campaign ideas for you.</p>
               <div class="form-group">
-                <input type="text" v-model="userPrompt" placeholder="例如：如何解决这个问题的不同角度">
+                <input type="text" v-model="userPrompt" placeholder="Example: Different approaches for our eco-friendly product campaign">
               </div>
               <div class="modal-actions">
                 <button type="button" @click="generateAIOptions" :disabled="isGenerating">
-                  {{ isGenerating ? '生成中...' : '生成选项' }}
+                  {{ isGenerating ? 'Generating...' : 'Generate Options' }}
                 </button>
-                <button type="button" @click="cancelAIGenerate">取消</button>
+                <button type="button" @click="cancelAIGenerate">Cancel</button>
               </div>
             </div>
           </div>
@@ -1125,8 +1167,8 @@
           <!-- AI Generated Options Dialog -->
           <div v-if="showAIOptions" class="modal-overlay">
             <div class="modal-content">
-              <h3>选择思考选项</h3>
-              <p>以下是基于您的提示生成的思考选项，可以选择多个选项继续探索。</p>
+              <h3>Select Campaign Options</h3>
+              <p>Here are campaign ideas generated based on your prompt. You can select multiple options to explore further.</p>
               <div class="ai-options-list">
                 <div v-for="(option, index) in aiGeneratedOptions"
                      :key="index"
@@ -1143,8 +1185,8 @@
                 </div>
               </div>
               <div class="modal-actions">
-                <button type="button" @click="applySelectedOptions" :disabled="!hasSelectedOptions">应用选中项</button>
-                <button type="button" @click="cancelAIGenerate">取消</button>
+                <button type="button" @click="applySelectedOptions" :disabled="!hasSelectedOptions">Apply Selected</button>
+                <button type="button" @click="cancelAIGenerate">Cancel</button>
               </div>
             </div>
           </div>
@@ -1152,19 +1194,19 @@
           <!-- Path Analysis Dialog -->
           <div v-if="showPathAnalysis" class="modal-overlay">
             <div class="modal-content path-analysis">
-              <h3>思考路径分析</h3>
+              <h3>Campaign Analysis</h3>
               <div class="path-analysis-content">
-                <h4>路径概述</h4>
+                <h4>Campaign Overview</h4>
                 <p>{{ pathAnalysis.summary }}</p>
 
-                <h4>见解</h4>
+                <h4>Insights</h4>
                 <ul>
                   <li v-for="(insight, index) in pathAnalysis.insights" :key="index">
                     {{ insight }}
                   </li>
                 </ul>
 
-                <h4>建议</h4>
+                <h4>Recommendations</h4>
                 <ul>
                   <li v-for="(recommendation, index) in pathAnalysis.recommendations" :key="index">
                     {{ recommendation }}
@@ -1172,7 +1214,7 @@
                 </ul>
               </div>
               <div class="modal-actions">
-                <button type="button" @click="closePathAnalysis">关闭</button>
+                <button type="button" @click="closePathAnalysis">Close</button>
               </div>
             </div>
           </div>
@@ -1180,14 +1222,14 @@
           <!-- Save Path Dialog -->
           <div v-if="showSavePathDialog" class="modal-overlay">
             <div class="modal-content">
-              <h3>保存思考路径</h3>
-              <p>请为您的思考路径输入一个名称。</p>
+              <h3>Save Campaign</h3>
+              <p>Enter a name for your campaign plan.</p>
               <div class="form-group">
-                <input type="text" v-model="newPathName" placeholder="路径名称">
+                <input type="text" v-model="newPathName" placeholder="Campaign name">
               </div>
               <div class="modal-actions">
-                <button type="button" @click="saveCurrentPath">保存</button>
-                <button type="button" @click="cancelSavePath">取消</button>
+                <button type="button" @click="saveCurrentPath">Save</button>
+                <button type="button" @click="cancelSavePath">Cancel</button>
               </div>
             </div>
           </div>
@@ -1195,70 +1237,70 @@
           <!-- Load Path Dialog -->
           <div v-if="showLoadPathDialog" class="modal-overlay">
             <div class="modal-content">
-              <h3>加载思考路径</h3>
-              <p>选择要加载的思考路径。</p>
+              <h3>Load Campaign</h3>
+              <p>Select a campaign to load.</p>
               <div class="saved-paths-list">
                 <div v-if="savedPaths.length === 0" class="no-paths">
-                  没有保存的路径。请先保存或导入路径。
+                  No saved campaigns. Please save or import a campaign first.
                 </div>
                 <div v-for="(path, index) in savedPaths" :key="path.id" class="saved-path-item">
                   <div class="saved-path-info">
                     <h4>{{ path.name }}</h4>
-                    <p>创建于: {{ formatTime(path.timestamp) }}</p>
-                    <p>节点数: {{ path.path.length }}</p>
+                    <p>Created: {{ formatTime(path.timestamp) }}</p>
+                    <p>Elements: {{ path.path.length }}</p>
                   </div>
                   <div class="saved-path-actions">
-                    <button type="button" @click="loadSelectedPath(path)">加载</button>
-                    <button type="button" class="delete-btn" @click="deleteSelectedPath(index)">删除</button>
+                    <button type="button" @click="loadSelectedPath(path)">Load</button>
+                    <button type="button" class="delete-btn" @click="deleteSelectedPath(index)">Delete</button>
                   </div>
                 </div>
               </div>
               <div class="modal-actions">
-                <button type="button" @click="cancelLoadPath">取消</button>
+                <button type="button" @click="cancelLoadPath">Cancel</button>
               </div>
             </div>
           </div>
 
-          <!-- Path Comparison Dialog -->
+          <!-- Campaign Comparison Dialog -->
           <div v-if="showPathComparisonDialog" class="modal-overlay">
             <div class="modal-content">
-              <h3>选择要比较的路径</h3>
-              <p>选择一个路径与当前路径进行比较。</p>
+              <h3>Select Campaign to Compare</h3>
+              <p>Choose a campaign to compare with your current campaign.</p>
               <div class="saved-paths-list">
                 <div v-if="savedPaths.length === 0" class="no-paths">
-                  没有保存的路径。请先保存或导入路径。
+                  No saved campaigns. Please save or import a campaign first.
                 </div>
                 <div v-for="path in savedPaths" :key="path.id" class="saved-path-item">
                   <div class="saved-path-info">
                     <h4>{{ path.name }}</h4>
-                    <p>创建于: {{ formatTime(path.timestamp) }}</p>
-                    <p>节点数: {{ path.path.length }}</p>
+                    <p>Created: {{ formatTime(path.timestamp) }}</p>
+                    <p>Elements: {{ path.path.length }}</p>
                   </div>
                   <div class="saved-path-actions">
-                    <button type="button" @click="compareWithPath(path)">比较</button>
+                    <button type="button" @click="compareWithPath(path)">Compare</button>
                   </div>
                 </div>
               </div>
               <div class="modal-actions">
-                <button type="button" @click="cancelPathComparison">取消</button>
+                <button type="button" @click="cancelPathComparison">Cancel</button>
               </div>
             </div>
           </div>
 
-          <!-- Path Comparison Result Dialog -->
+          <!-- Campaign Comparison Result Dialog -->
           <div v-if="showPathComparison" class="modal-overlay">
             <div class="modal-content path-analysis">
-              <h3>路径比较结果</h3>
+              <h3>Campaign Comparison Results</h3>
               <div class="path-comparison-content">
                 <div class="comparison-header">
                   <div class="comparison-path">
-                    <h4>当前路径</h4>
-                    <p>节点数: {{ pathComparisonResult.currentPathLength }}</p>
+                    <h4>Current Campaign</h4>
+                    <p>Elements: {{ pathComparisonResult.currentPathLength }}</p>
                   </div>
                   <div class="comparison-vs">VS</div>
                   <div class="comparison-path">
                     <h4>{{ pathComparisonResult.comparisonPathName }}</h4>
-                    <p>节点数: {{ pathComparisonResult.comparisonPathLength }}</p>
+                    <p>Elements: {{ pathComparisonResult.comparisonPathLength }}</p>
                   </div>
                 </div>
 
@@ -1305,7 +1347,7 @@
                   </li>
                 </ul>
 
-                <h4>建议</h4>
+                <h4>Recommendations</h4>
                 <ul>
                   <li v-for="(recommendation, index) in pathComparisonResult.recommendations" :key="index">
                     {{ recommendation }}
@@ -1313,7 +1355,7 @@
                 </ul>
               </div>
               <div class="modal-actions">
-                <button type="button" @click="closePathComparison">关闭</button>
+                <button type="button" @click="closePathComparison">Close</button>
               </div>
             </div>
           </div>
@@ -1321,19 +1363,19 @@
           <!-- Share Dialog -->
           <div v-if="showShareDialog" class="modal-overlay">
             <div class="modal-content">
-              <h3>分享思考路径</h3>
-              <p>使用以下链接分享您的思考路径。</p>
+              <h3>Share Campaign</h3>
+              <p>Use the link below to share your campaign plan.</p>
               <div class="share-link">
-                <label for="shareLink">分享链接：</label>
-                <input type="text" id="shareLink" readonly :value="shareLink" @click="$event.target.select()" placeholder="分享链接" title="点击选中分享链接">
+                <label for="shareLink">Share Link:</label>
+                <input type="text" id="shareLink" readonly :value="shareLink" @click="$event.target.select()" placeholder="Share link" title="Click to select share link">
               </div>
               <div class="form-group">
-                <label for="shareComment">添加评论（可选）：</label>
-                <textarea id="shareComment" v-model="shareComment" placeholder="对这个思考路径的评论或说明"></textarea>
+                <label for="shareComment">Add Comment (optional):</label>
+                <textarea id="shareComment" v-model="shareComment" placeholder="Add comments or notes about this campaign plan"></textarea>
               </div>
               <div class="modal-actions">
-                <button type="button" @click="sharePath">复制链接</button>
-                <button type="button" @click="cancelShare">取消</button>
+                <button type="button" @click="sharePath">Copy Link</button>
+                <button type="button" @click="cancelShare">Cancel</button>
               </div>
             </div>
           </div>
@@ -1355,11 +1397,11 @@
                 </div>
               </div>
               <div class="add-comment">
-                <textarea v-model="newComment" placeholder="添加评论..."></textarea>
-                <button type="button" @click="addComment">发布评论</button>
+                <textarea v-model="newComment" placeholder="Add a comment..."></textarea>
+                <button type="button" @click="addComment">Post Comment</button>
               </div>
               <div class="modal-actions">
-                <button type="button" @click="closeComments">关闭</button>
+                <button type="button" @click="closeComments">Close</button>
               </div>
             </div>
           </div>
@@ -1367,24 +1409,24 @@
           <!-- Image Generator Dialog -->
           <div v-if="showImageGenDialog" class="modal-overlay">
             <div class="modal-content">
-              <h3>生成图像</h3>
-              <p>基于您的思考路径生成图像。</p>
+              <h3>Generate Ad Visual</h3>
+              <p>Create visuals based on your campaign elements.</p>
 
               <div class="form-group">
-                <label for="positivePrompt">正面提示词（来自您的路径节点）：</label>
-                <textarea id="positivePrompt" v-model="positivePrompt" placeholder="正面提示词"></textarea>
+                <label for="positivePrompt">Positive Prompt (from your campaign elements):</label>
+                <textarea id="positivePrompt" v-model="positivePrompt" placeholder="Positive prompt"></textarea>
               </div>
 
               <div class="form-group">
-                <label for="negativePrompt">反面提示词（来自其他节点）：</label>
-                <textarea id="negativePrompt" v-model="negativePrompt" placeholder="反面提示词"></textarea>
+                <label for="negativePrompt">Negative Prompt (elements to avoid):</label>
+                <textarea id="negativePrompt" v-model="negativePrompt" placeholder="Negative prompt"></textarea>
               </div>
 
               <div class="modal-actions">
                 <button type="button" @click="generateImage" :disabled="isGeneratingImage">
-                  {{ isGeneratingImage ? '生成中...' : '生成图像' }}
+                  {{ isGeneratingImage ? 'Generating...' : 'Generate Visual' }}
                 </button>
-                <button type="button" @click="closeImageGenerator">取消</button>
+                <button type="button" @click="closeImageGenerator">Cancel</button>
               </div>
             </div>
           </div>
@@ -1392,20 +1434,20 @@
           <!-- Generated Image Dialog -->
           <div v-if="showGeneratedImage" class="modal-overlay">
             <div class="modal-content image-result">
-              <h3>生成的图像</h3>
+              <h3>Generated Ad Visual</h3>
               <div class="generated-image">
-                <img :src="generatedImage" alt="生成的图像">
+                <img :src="generatedImage" alt="Generated ad visual">
               </div>
               <div class="image-info">
-                <h4>使用的提示词</h4>
+                <h4>Prompts Used</h4>
                 <div class="prompt-info">
-                  <p><strong>正面提示词：</strong> {{ positivePrompt }}</p>
-                  <p><strong>反面提示词：</strong> {{ negativePrompt }}</p>
+                  <p><strong>Positive Prompt:</strong> {{ positivePrompt }}</p>
+                  <p><strong>Negative Prompt:</strong> {{ negativePrompt }}</p>
                 </div>
               </div>
               <div class="modal-actions">
-                <button type="button" @click="saveGeneratedImage">保存图像</button>
-                <button type="button" @click="closeGeneratedImage">关闭</button>
+                <button type="button" @click="saveGeneratedImage">Save Visual</button>
+                <button type="button" @click="closeGeneratedImage">Close</button>
               </div>
             </div>
           </div>
@@ -1413,21 +1455,21 @@
           <!-- Enlarged Image Dialog -->
           <div v-if="showEnlargedImage" class="modal-overlay">
             <div class="modal-content image-result">
-              <h3>图像详情</h3>
+              <h3>Ad Visual Details</h3>
               <div class="generated-image">
-                <img :src="currentViewingImage.url" alt="放大的图像">
+                <img :src="currentViewingImage.url" alt="Enlarged ad visual">
               </div>
               <div class="image-info">
-                <h4>使用的提示词</h4>
+                <h4>Prompts Used</h4>
                 <div class="prompt-info">
-                  <p><strong>正面提示词：</strong> {{ currentViewingImage.positivePrompt }}</p>
-                  <p><strong>反面提示词：</strong> {{ currentViewingImage.negativePrompt }}</p>
+                  <p><strong>Positive Prompt:</strong> {{ currentViewingImage.positivePrompt }}</p>
+                  <p><strong>Negative Prompt:</strong> {{ currentViewingImage.negativePrompt }}</p>
                 </div>
-                <p class="image-timestamp">生成时间： {{ formatTime(currentViewingImage.timestamp) }}</p>
+                <p class="image-timestamp">Generated: {{ formatTime(currentViewingImage.timestamp) }}</p>
               </div>
               <div class="modal-actions">
-                <button type="button" @click="deleteImage(currentViewingImage.id)">删除图像</button>
-                <button type="button" @click="closeEnlargedImage">关闭</button>
+                <button type="button" @click="deleteImage(currentViewingImage.id)">Delete Visual</button>
+                <button type="button" @click="closeEnlargedImage">Close</button>
               </div>
             </div>
           </div>

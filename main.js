@@ -1,112 +1,145 @@
-// Sample data for the mind map
+// Sample data for the advertising campaign planner
 const mindMapData = {
   root: {
     id: 'root',
-    label: 'Start Here',
-    details: 'This is the beginning of your critical thinking journey. Choose a direction to explore.',
+    label: 'Campaign Brief',
+    details: 'This is the starting point for your advertising campaign planning. Choose a direction to explore.',
     options: [
       {
         id: 'option1',
-        text: 'Analyze Problem',
-        nextNode: 'analyze'
+        text: 'Target Audience Analysis',
+        nextNode: 'audience'
       },
       {
         id: 'option2',
-        text: 'Gather Information',
-        nextNode: 'gather'
+        text: 'Campaign Objectives',
+        nextNode: 'objectives'
       },
       {
         id: 'option3',
-        text: 'Consider Alternatives',
-        nextNode: 'alternatives'
+        text: 'Creative Strategy',
+        nextNode: 'creative'
       }
     ]
   },
-  analyze: {
-    id: 'analyze',
-    label: 'Analyze the Problem',
-    details: 'Break down the problem into its components to understand it better.',
+  audience: {
+    id: 'audience',
+    label: 'Target Audience Analysis',
+    details: 'Define and analyze your target audience to ensure your campaign resonates with the right people.',
     options: [
       {
-        id: 'analyze1',
-        text: 'Identify Key Issues',
-        nextNode: 'issues'
+        id: 'audience1',
+        text: 'Demographics',
+        nextNode: 'demographics'
       },
       {
-        id: 'analyze2',
-        text: 'Define Constraints',
-        nextNode: 'constraints'
+        id: 'audience2',
+        text: 'Psychographics',
+        nextNode: 'psychographics'
+      },
+      {
+        id: 'audience3',
+        text: 'Behavioral Analysis',
+        nextNode: 'behavior'
       }
     ]
   },
-  gather: {
-    id: 'gather',
-    label: 'Gather Information',
-    details: 'Collect relevant data and facts to inform your decision.',
+  objectives: {
+    id: 'objectives',
+    label: 'Campaign Objectives',
+    details: 'Define clear, measurable objectives for your advertising campaign.',
     options: [
       {
-        id: 'gather1',
-        text: 'Research Sources',
-        nextNode: 'sources'
+        id: 'obj1',
+        text: 'Awareness Goals',
+        nextNode: 'awareness'
       },
       {
-        id: 'gather2',
-        text: 'Consult Experts',
-        nextNode: 'experts'
+        id: 'obj2',
+        text: 'Conversion Goals',
+        nextNode: 'conversion'
+      },
+      {
+        id: 'obj3',
+        text: 'Brand Positioning',
+        nextNode: 'positioning'
       }
     ]
   },
-  alternatives: {
-    id: 'alternatives',
-    label: 'Consider Alternatives',
-    details: 'Explore different possible solutions or approaches.',
+  creative: {
+    id: 'creative',
+    label: 'Creative Strategy',
+    details: 'Develop the creative approach and messaging for your advertising campaign.',
     options: [
       {
-        id: 'alt1',
-        text: 'Brainstorm Ideas',
-        nextNode: 'brainstorm'
+        id: 'creative1',
+        text: 'Key Messaging',
+        nextNode: 'messaging'
       },
       {
-        id: 'alt2',
-        text: 'Evaluate Options',
-        nextNode: 'evaluate'
+        id: 'creative2',
+        text: 'Visual Identity',
+        nextNode: 'visual'
+      },
+      {
+        id: 'creative3',
+        text: 'Content Strategy',
+        nextNode: 'content'
       }
     ]
   },
-  issues: {
-    id: 'issues',
-    label: 'Identify Key Issues',
-    details: 'Determine the most important aspects of the problem that need to be addressed.',
+  demographics: {
+    id: 'demographics',
+    label: 'Demographics Analysis',
+    details: 'Analyze age, gender, income, education, and other demographic factors of your target audience.',
     options: []
   },
-  constraints: {
-    id: 'constraints',
-    label: 'Define Constraints',
-    details: 'Understand the limitations and boundaries that affect possible solutions.',
+  psychographics: {
+    id: 'psychographics',
+    label: 'Psychographic Profiling',
+    details: 'Understand values, interests, lifestyles, and attitudes of your target audience.',
     options: []
   },
-  sources: {
-    id: 'sources',
-    label: 'Research Sources',
-    details: 'Find and evaluate reliable sources of information.',
+  behavior: {
+    id: 'behavior',
+    label: 'Behavioral Analysis',
+    details: 'Study online behavior, purchase patterns, media consumption habits, and other behavioral traits of your audience.',
     options: []
   },
-  experts: {
-    id: 'experts',
-    label: 'Consult Experts',
-    details: 'Seek advice from people with specialized knowledge or experience.',
+  awareness: {
+    id: 'awareness',
+    label: 'Awareness Goals',
+    details: 'Define objectives related to brand awareness, reach, and visibility among your target audience.',
     options: []
   },
-  brainstorm: {
-    id: 'brainstorm',
-    label: 'Brainstorm Ideas',
-    details: 'Generate as many potential solutions as possible without judging them initially.',
+  conversion: {
+    id: 'conversion',
+    label: 'Conversion Goals',
+    details: 'Set specific, measurable conversion objectives such as leads, sales, sign-ups, or other actions.',
     options: []
   },
-  evaluate: {
-    id: 'evaluate',
-    label: 'Evaluate Options',
-    details: 'Assess each alternative based on criteria such as feasibility, cost, and effectiveness.',
+  positioning: {
+    id: 'positioning',
+    label: 'Brand Positioning',
+    details: 'Define how you want your brand to be perceived in relation to competitors and in the minds of consumers.',
+    options: []
+  },
+  messaging: {
+    id: 'messaging',
+    label: 'Key Messaging',
+    details: 'Develop the core messages, value proposition, and tone of voice for your campaign.',
+    options: []
+  },
+  visual: {
+    id: 'visual',
+    label: 'Visual Identity',
+    details: 'Create the visual elements of your campaign including imagery, color schemes, and design direction.',
+    options: []
+  },
+  content: {
+    id: 'content',
+    label: 'Content Strategy',
+    details: 'Plan what content to create, which formats to use, and how to distribute it across channels.',
     options: []
   }
 };
@@ -165,61 +198,61 @@ const app = Vue.createApp({
         insights: [],
         recommendations: []
       },
-      // 保存的思考路径
+      // Saved campaign paths
       savedPaths: [],
-      // 显示保存路径对话框
+      // Show save campaign dialog
       showSavePathDialog: false,
-      // 显示加载路径对话框
+      // Show load campaign dialog
       showLoadPathDialog: false,
-      // 新路径名称
+      // New campaign name
       newPathName: '',
-      // 当前比较的路径
+      // Current comparison campaign
       comparisonPath: null,
-      // 显示路径比较
+      // Show campaign comparison
       showPathComparison: false,
-      // 显示路径比较对话框
+      // Show campaign comparison dialog
       showPathComparisonDialog: false,
-      // 路径比较结果
+      // Campaign comparison results
       pathComparisonResult: null,
-      // 显示分享对话框
+      // Show share dialog
       showShareDialog: false,
-      // 分享链接
+      // Share link
       shareLink: '',
-      // 分享评论
+      // Share comment
       shareComment: '',
-      // 显示评论对话框
+      // Show comments dialog
       showCommentsDialog: false,
-      // 评论列表
+      // Comments list
       comments: [],
-      // 新评论
+      // New comment
       newComment: '',
-      // 节点评价
+      // Node feedback
       nodeRating: '',
-      // 节点评价历史
+      // Node feedback history
       nodeRatings: {},
-      // 文生图功能
+      // Text-to-image feature
       showImageGenDialog: false,
-      // 生成的图像
+      // Generated image
       generatedImage: null,
-      // 正面提示词
+      // Positive prompt
       positivePrompt: '',
-      // 反面提示词
+      // Negative prompt
       negativePrompt: '',
-      // 图像生成中
+      // Image generation in progress
       isGeneratingImage: false,
-      // 显示生成的图像
+      // Show generated image
       showGeneratedImage: false,
-      // 生成的图像列表
+      // Generated images list
       generatedImages: [],
-      // 当前查看的图像
+      // Currently viewing image
       currentViewingImage: null,
-      // 显示放大图像
+      // Show enlarged image
       showEnlargedImage: false,
-      // 初始界面模式
+      // Initial interface mode
       initialMode: true,
-      // 用户初始输入
+      // User initial input
       userInitialInput: '',
-      // 正在处理用户输入
+      // Processing user input
       processingInput: false
     };
   },
@@ -227,9 +260,47 @@ const app = Vue.createApp({
     this.initMindMap();
     this.loadNodeRatings();
     this.loadGeneratedImages();
+
+    // Add debug information
+    console.log('Application loaded, image count:', this.generatedImages.length);
+
+    // Periodically check thumbnails container status
+    setTimeout(() => {
+      const thumbnailsContainer = document.getElementById('thumbnails-container');
+      if (thumbnailsContainer) {
+        console.log('Thumbnails container status:', {
+          display: thumbnailsContainer.style.display,
+          visibility: thumbnailsContainer.style.visibility,
+          height: thumbnailsContainer.offsetHeight,
+          hasImages: this.generatedImages.length > 0
+        });
+
+        // Force display thumbnails container
+        thumbnailsContainer.style.display = 'block';
+
+        // If there are images, ensure thumbnails display correctly
+        if (this.generatedImages.length > 0) {
+          // Add test image to thumbnails container
+          const scrollContainer = thumbnailsContainer.querySelector('.thumbnails-scroll');
+          if (scrollContainer && scrollContainer.children.length === 0) {
+            console.log('Adding test image to thumbnails container');
+
+            // Ensure Vue rendering is complete
+            this.$nextTick(() => {
+              // Force display thumbnails container
+              thumbnailsContainer.style.display = 'block';
+              thumbnailsContainer.style.visibility = 'visible';
+              thumbnailsContainer.style.opacity = '1';
+            });
+          }
+        }
+      } else {
+        console.log('Thumbnails container not found');
+      }
+    }, 1000);
   },
   computed: {
-    // 检查是否有选中的选项
+    // Check if there are selected options
     hasSelectedOptions() {
       return this.aiGeneratedOptions.some(option => option.selected);
     }
@@ -237,12 +308,12 @@ const app = Vue.createApp({
   methods: {
     // Initialize the mind map
     initMindMap() {
-      // 如果在初始模式，不初始化图表
+      // If in initial mode, don't initialize the chart
       if (this.initialMode) {
         return;
       }
 
-      // 在非初始模式下初始化图表
+      // Initialize the chart in non-initial mode
       try {
         // Get the container element
         const container = this.$el.querySelector('.mindmap-container');
@@ -260,6 +331,8 @@ const app = Vue.createApp({
         this.paper = new joint.dia.Paper({
           el: container,
           model: this.graph,
+          // Use standard element view
+          elementView: joint.dia.ElementView,
           width: '100%',
           height: '100%',
           gridSize: 10,
@@ -268,22 +341,22 @@ const app = Vue.createApp({
             color: '#f8f9fa'
           },
           interactive: {
-            elementMove: true,     // 允许元素拖拽
-            linkMove: true,       // 允许连线拖拽
-            vertexAdd: false,     // 不允许添加顶点
-            vertexMove: false,    // 不允许移动顶点
-            labelMove: false,     // 不允许移动标签
-            arrowheadMove: false, // 不允许移动箭头
-            useLinkTools: false   // 不使用连线工具
+            elementMove: true,     // Allow element dragging
+            linkMove: true,       // Allow link dragging
+            vertexAdd: false,     // Don't allow adding vertices
+            vertexMove: false,    // Don't allow moving vertices
+            labelMove: false,     // Don't allow moving labels
+            arrowheadMove: false, // Don't allow moving arrowheads
+            useLinkTools: false   // Don't use link tools
           }
         });
 
-        // 启用画布拖拽
+        // Enable canvas panning
         this.enablePanning();
 
         // Create the initial tree structure
         const rootNode = this.createNodeShape('root', mindMapData.root.label, 400, 50, 0);
-        rootNode.set('level', 0); // 设置根节点层级为0
+        rootNode.set('level', 0); // Set root node level to 0
         this.graph.addCell(rootNode);
 
         // Add first level children
@@ -293,23 +366,23 @@ const app = Vue.createApp({
             mindMapData[option.nextNode].label,
             200 + index * 300,
             180,
-            1 // 一级节点层级为1
+            1 // Level 1 for first-level nodes
           );
-          node.set('level', 1); // 设置节点层级
+          node.set('level', 1); // Set node level
           const link = this.createLink('root', option.nextNode);
           return [node, link];
         }).flat();
 
         this.graph.addCells(firstLevelNodes);
 
-        // 选中根节点并显示详情
+        // Select root node and show details
         this.selectedNode.id = 'root';
         this.selectedNode.label = mindMapData.root.label;
         this.selectedNode.details = mindMapData.root.details;
         this.selectedNode.options = mindMapData.root.options;
         this.showNodeDetails = true;
 
-        // 设置节点详情面板位置
+        // Set node details panel position
         const rootElement = this.graph.getCell('root');
         if (rootElement) {
           const position = rootElement.position();
@@ -317,7 +390,7 @@ const app = Vue.createApp({
           this.nodeDetailsStyle.left = `${position.x + 80}px`;
         }
 
-        // 显示AI生成按钮
+        // Show AI generate button
         this.showAIGenerateButton = true;
 
         // Set up event listeners
@@ -329,7 +402,7 @@ const app = Vue.createApp({
 
     // Create a node shape
     createNodeShape(id, label, x, y, level = 0) {
-      // 根据文本长度调整字体大小
+      // Adjust font size based on text length
       let fontSize = 14;
       if (label.length > 20) {
         fontSize = 12;
@@ -338,35 +411,35 @@ const app = Vue.createApp({
         fontSize = 10;
       }
 
-      // 限制文本长度
+      // Limit text length
       let displayLabel = label;
       if (label.length > 40) {
         displayLabel = label.substring(0, 37) + '...';
       }
 
-      // 根据层级选择不同的颜色
+      // Choose different colors based on level
       let fillColor = '#3498db';
       let strokeColor = '#2980b9';
 
       switch (level % 5) {
         case 0:
-          fillColor = '#3498db'; // 蓝色
+          fillColor = '#3498db'; // Blue
           strokeColor = '#2980b9';
           break;
         case 1:
-          fillColor = '#2ecc71'; // 绿色
+          fillColor = '#2ecc71'; // Green
           strokeColor = '#27ae60';
           break;
         case 2:
-          fillColor = '#9b59b6'; // 紫色
+          fillColor = '#9b59b6'; // Purple
           strokeColor = '#8e44ad';
           break;
         case 3:
-          fillColor = '#e67e22'; // 橙色
+          fillColor = '#e67e22'; // Orange
           strokeColor = '#d35400';
           break;
         case 4:
-          fillColor = '#34495e'; // 深蓝色
+          fillColor = '#34495e'; // Dark blue
           strokeColor = '#2c3e50';
           break;
       }
@@ -419,7 +492,7 @@ const app = Vue.createApp({
 
     // Set up event listeners for the paper
     setupEventListeners() {
-      // 确保图表已初始化
+      // Ensure chart is initialized
       if (!this.paper) {
         console.error('Paper not initialized');
         return;
@@ -433,6 +506,43 @@ const app = Vue.createApp({
           const nodeData = mindMapData[nodeId];
 
           if (nodeData) {
+            // Check if it's an image node
+            const isImageNode = nodeId.startsWith('image_node_') || nodeData.imageUrl;
+
+            if (isImageNode) {
+              console.log('Clicked image node:', nodeId);
+
+              // If it's an image node, show enlarged image
+              const imageUrl = nodeData.imageUrl || cell.prop('imageUrl');
+              if (imageUrl) {
+                console.log('Image URL:', imageUrl);
+
+                // Check if image is available
+                window.customJointUtils.checkImageLoaded(imageUrl, (isLoaded) => {
+                  if (isLoaded) {
+                    console.log('Image loaded successfully, showing enlarged image');
+
+                    // Create a temporary image object for viewing
+                    const tempImage = {
+                      id: nodeId,
+                      url: imageUrl,
+                      timestamp: nodeData.timestamp || new Date().toISOString(),
+                      positivePrompt: nodeData.details ? nodeData.details.split('\n\n')[1]?.replace('Positive Prompt: ', '') : '',
+                      negativePrompt: nodeData.details ? nodeData.details.split('\n\n')[2]?.replace('Negative Prompt: ', '') : ''
+                    };
+
+                    this.currentViewingImage = tempImage;
+                    this.showEnlargedImage = true;
+                  } else {
+                    console.error('Image loading failed:', imageUrl);
+                    alert('Image loading failed, please try generating again');
+                  }
+                });
+                return;
+              }
+            }
+
+            // If not an image node, process normally
             // Update selected node data
             this.selectedNode.id = nodeId;
             this.selectedNode.label = nodeData.label;
@@ -442,10 +552,10 @@ const app = Vue.createApp({
             // Show node details panel
             this.showNodeDetails = true;
 
-            // 显示AI生成按钮，所有节点都可以生成AI选项
+            // Show AI generate button, all nodes can generate AI options
             this.showAIGenerateButton = true;
 
-            // 不再需要根据节点位置调整详情面板位置，因为它现在是固定位置
+            // No longer need to adjust details panel position based on node position, as it's now fixed
           }
         }
       });
@@ -485,8 +595,8 @@ const app = Vue.createApp({
       // Add to data model
       mindMapData[newNodeId] = {
         id: newNodeId,
-        label: 'New Node',
-        details: 'Add details for this new node',
+        label: 'New Element',
+        details: 'Add details for this new campaign element',
         options: []
       };
 
@@ -511,7 +621,7 @@ const app = Vue.createApp({
       // Create and add the new node
       const newNode = this.createNodeShape(
         newNodeId,
-        'New Node',
+        'New Element',
         parentPosition.x + xOffset,
         parentPosition.y + 150
       );
@@ -573,7 +683,7 @@ const app = Vue.createApp({
             this.paper.el.clientHeight / 2 - element.position().y - element.size().height / 2
           );
 
-          // 记录用户选择的路径
+          // Record user's selected path
           const currentNode = mindMapData[this.selectedNode.id];
           this.userPath.push({
             fromNodeId: this.selectedNode.id,
@@ -585,7 +695,7 @@ const app = Vue.createApp({
             timestamp: new Date().toISOString()
           });
 
-          // 高亮显示路径
+          // Highlight path
           this.highlightPath();
 
           // Update selected node
@@ -599,7 +709,7 @@ const app = Vue.createApp({
           this.nodeDetailsStyle.top = `${position.y + 80}px`;
           this.nodeDetailsStyle.left = `${position.x + 80}px`;
 
-          // 如果节点没有选项，显示AI生成按钮
+          // If node has no options, show AI generate button
           if (nextNode.options.length === 0) {
             this.showAIGenerateButton = true;
           } else {
@@ -609,9 +719,9 @@ const app = Vue.createApp({
       }
     },
 
-    // 高亮显示用户选择的路径
+    // Highlight user's selected path
     highlightPath() {
-      // 重置所有连接的样式
+      // Reset all link styles
       this.graph.getLinks().forEach(link => {
         link.attr({
           line: {
@@ -621,7 +731,7 @@ const app = Vue.createApp({
         });
       });
 
-      // 高亮用户路径
+      // Highlight user path
       if (this.userPath.length > 0) {
         this.userPath.forEach(step => {
           const links = this.graph.getLinks().filter(link =>
@@ -676,7 +786,7 @@ const app = Vue.createApp({
       // Add the option
       this.editingNode.options.push({
         id: optionId,
-        text: 'New Option',
+        text: 'New Path',
         nextNode: newNodeId
       });
     },
@@ -712,8 +822,8 @@ const app = Vue.createApp({
           // Create the new node in the data model
           mindMapData[targetNodeId] = {
             id: targetNodeId,
-            label: 'New Node',
-            details: 'Add details for this new node',
+            label: 'New Element',
+            details: 'Add details for this new campaign element',
             options: []
           };
 
@@ -728,7 +838,7 @@ const app = Vue.createApp({
             // Create and add the new node to the graph
             const newNode = this.createNodeShape(
               targetNodeId,
-              'New Node',
+              'New Element',
               parentPosition.x + xOffset,
               parentPosition.y + 150
             );
@@ -761,7 +871,7 @@ const app = Vue.createApp({
       this.showEditDialog = false;
     },
 
-    // 显示AI生成选项对话框
+    // Show AI generate options dialog
     showAIGenerateDialog() {
       this.showAIOptions = false;
       this.aiGeneratedOptions = [];
@@ -769,19 +879,19 @@ const app = Vue.createApp({
       this.showAIGeneratePrompt = true;
     },
 
-    // 生成AI选项
+    // Generate AI options
     generateAIOptions() {
       if (!this.userPrompt.trim()) {
-        alert('请输入提示词以生成选项');
+        alert('Please enter a prompt to generate options');
         return;
       }
 
       this.isGenerating = true;
 
-      // 模拟 AI 生成过程
+      // Simulate AI generation process
       setTimeout(() => {
-        // 这里模拟 AI 生成的选项
-        // 实际应用中应该调用后端 API
+        // This simulates AI-generated options
+        // In a real application, this would call a backend API
         const currentContext = {
           currentNode: this.selectedNode,
           userPath: this.userPath,
@@ -795,62 +905,62 @@ const app = Vue.createApp({
       }, 1500);
     },
 
-    // 模拟AI生成选项
+    // Simulate AI option generation
     simulateAIGeneration(context) {
-      // 基于当前节点和用户路径生成相关选项
+      // Generate relevant options based on current node and user path
       const options = [];
       const themes = [
-        '深入分析', '批判性思考', '创造性解决',
-        '系统性思考', '评估影响', '探索替代方案',
-        '考虑不同角度', '识别潜在偏见', '寻找根本原因'
+        'In-depth Analysis', 'Critical Thinking', 'Creative Solutions',
+        'Systems Thinking', 'Impact Assessment', 'Alternative Approaches',
+        'Multiple Perspectives', 'Identifying Biases', 'Root Cause Analysis'
       ];
 
-      // 生成 3-5 个选项
+      // Generate 3-5 options
       const numOptions = Math.floor(Math.random() * 3) + 3;
 
       for (let i = 0; i < numOptions; i++) {
         const theme = themes[Math.floor(Math.random() * themes.length)];
         let optionText = '';
 
-        // 基于用户提示词生成不同的选项
-        if (context.prompt.includes('问题') || context.prompt.includes('problem')) {
-          optionText = `${theme}这个问题的各个方面`;
-        } else if (context.prompt.includes('解决') || context.prompt.includes('solution')) {
-          optionText = `${theme}可能的解决方案`;
-        } else if (context.prompt.includes('思考') || context.prompt.includes('think')) {
-          optionText = `${theme}这个问题的思考过程`;
+        // Generate different options based on user prompt
+        if (context.prompt.includes('problem') || context.prompt.includes('issue')) {
+          optionText = `${theme} of different aspects of this problem`;
+        } else if (context.prompt.includes('solution') || context.prompt.includes('resolve')) {
+          optionText = `${theme} of possible solutions`;
+        } else if (context.prompt.includes('think') || context.prompt.includes('consider')) {
+          optionText = `${theme} of the thinking process for this issue`;
         } else {
-          optionText = `${theme}${context.prompt}的各个方面`;
+          optionText = `${theme} of various aspects of ${context.prompt}`;
         }
 
         options.push({
           id: `ai_option_${Date.now()}_${i}`,
           text: optionText,
-          details: `这个选项将带领您${theme}相关的内容，探索${context.prompt}的不同角度。`,
-          selected: false // 添加选中状态
+          details: `This option will guide you through content related to ${theme}, exploring different angles of ${context.prompt}.`,
+          selected: false // Add selection state
         });
       }
 
       return options;
     },
 
-    // 切换选项选中状态
+    // Toggle option selection state
     toggleOptionSelection(option) {
-      // 切换选中状态
+      // Toggle selection state
       option.selected = !option.selected;
     },
 
-    // 应用选中的选项
+    // Apply selected options
     applySelectedOptions() {
-      // 获取所有选中的选项
+      // Get all selected options
       const selectedOptions = this.aiGeneratedOptions.filter(option => option.selected);
 
       if (selectedOptions.length === 0) {
-        alert('请至少选择一个选项');
+        alert('Please select at least one option');
         return;
       }
 
-      // 当前节点ID
+      // Current node ID
       const currentNodeId = this.selectedNode.id;
       const currentNode = mindMapData[currentNodeId];
 
@@ -858,15 +968,15 @@ const app = Vue.createApp({
         currentNode.options = [];
       }
 
-      // 记录新节点和连线
+      // Record new nodes and links
       const newCells = [];
 
-      // 处理每个选中的选项
+      // Process each selected option
       selectedOptions.forEach((option, index) => {
-        // 创建新节点
+        // Create new node
         const newNodeId = `node_${Date.now()}_${index}`;
 
-        // 添加到数据模型
+        // Add to data model
         mindMapData[newNodeId] = {
           id: newNodeId,
           label: option.text,
@@ -874,7 +984,7 @@ const app = Vue.createApp({
           options: []
         };
 
-        // 添加选项到当前节点
+        // Add option to current node
         const newOption = {
           id: `option_${Date.now()}_${index}`,
           text: option.text,
@@ -883,7 +993,7 @@ const app = Vue.createApp({
 
         currentNode.options.push(newOption);
 
-        // 创建新节点在图中
+        // Create new node in the graph
         const parentElement = this.graph.getCell(currentNodeId);
         if (parentElement) {
           const parentPosition = parentElement.position();
@@ -891,11 +1001,11 @@ const app = Vue.createApp({
           const optionIndex = currentNode.options.length - 1;
           const xOffset = (optionIndex - childCount / 2) * 180;
 
-          // 获取当前节点的层级
+          // Get current node level
           const parentLevel = parentElement.get('level') || 0;
           const nodeLevel = parentLevel + 1;
 
-          // 创建新节点，并传入层级
+          // Create new node with level
           const newNode = this.createNodeShape(
             newNodeId,
             option.text,
@@ -904,93 +1014,93 @@ const app = Vue.createApp({
             nodeLevel
           );
 
-          // 存储层级信息
+          // Store level information
           newNode.set('level', nodeLevel);
 
-          // 创建连线
+          // Create link
           const link = this.createLink(currentNodeId, newNodeId);
 
-          // 添加到新单元列表
+          // Add to new cells list
           newCells.push(newNode, link);
         }
       });
 
-      // 一次性添加所有新单元
+      // Add all new cells at once
       if (newCells.length > 0) {
         this.graph.addCells(newCells);
       }
 
-      // 更新当前节点的选项
+      // Update current node options
       this.selectedNode.options = currentNode.options;
 
-      // 隐藏AI选项对话框
+      // Hide AI options dialog
       this.showAIOptions = false;
       this.showAIGenerateButton = false;
     },
 
-    // 选择单个AI生成的选项 (兼容旧版本)
+    // Select a single AI-generated option (for backward compatibility)
     selectAIOption(option) {
-      // 选中该选项
+      // Select this option
       option.selected = true;
 
-      // 其他选项取消选中
+      // Deselect other options
       this.aiGeneratedOptions.forEach(opt => {
         if (opt !== option) {
           opt.selected = false;
         }
       });
 
-      // 应用选中的选项
+      // Apply selected options
       this.applySelectedOptions();
     },
 
-    // 选择思考类型
+    // Select thinking type
     selectThinkingType(type) {
-      // 如果已经选中了该类型，则取消选中
+      // If this type is already selected, deselect it
       if (this.selectedThinkingType === type) {
         this.selectedThinkingType = null;
       } else {
         this.selectedThinkingType = type;
       }
 
-      // 根据选中的思考类型生成提示词
+      // Generate prompt based on selected thinking type
       let prompt = '';
 
       switch (type) {
-        case '根本原因':
-          prompt = `探索「${this.selectedNode.label}」的根本原因和深层因素`;
+        case 'Root Cause':
+          prompt = `Explore the root causes and underlying factors of "${this.selectedNode.label}"`;
           break;
-        case '系统影响':
-          prompt = `分析「${this.selectedNode.label}」的系统性影响和连锁效应`;
+        case 'System Impact':
+          prompt = `Analyze the systemic impacts and chain effects of "${this.selectedNode.label}"`;
           break;
-        case '潜在机会':
-          prompt = `发现「${this.selectedNode.label}」中的潜在机会和可能的突破点`;
+        case 'Potential Opportunities':
+          prompt = `Discover potential opportunities and possible breakthroughs in "${this.selectedNode.label}"`;
           break;
         default:
           return;
       }
 
-      // 设置提示词并显示AI生成对话框
+      // Set prompt and show AI generate dialog
       this.userPrompt = prompt;
       this.showAIGeneratePrompt = true;
     },
 
-    // 取消AI生成
+    // Cancel AI generation
     cancelAIGenerate() {
       this.showAIOptions = false;
       this.showAIGeneratePrompt = false;
     },
 
-    // 生成路径分析
+    // Generate path analysis
     generatePathAnalysis() {
       if (this.userPath.length === 0) {
-        alert('还没有足够的路径数据进行分析');
+        alert('Not enough path data for analysis');
         return;
       }
 
       this.isGenerating = true;
 
-      // 模拟生成分析
+      // Simulate analysis generation
       setTimeout(() => {
         this.pathAnalysis = this.simulatePathAnalysis();
         this.isGenerating = false;
@@ -998,51 +1108,51 @@ const app = Vue.createApp({
       }, 1500);
     },
 
-    // 模拟路径分析
+    // Simulate path analysis
     simulatePathAnalysis() {
-      // 基于用户路径生成分析
+      // Generate analysis based on user path
       const nodeNames = this.userPath.map(step => step.toNodeLabel);
-      const startNode = this.userPath.length > 0 ? this.userPath[0].fromNodeLabel : '起点';
+      const startNode = this.userPath.length > 0 ? this.userPath[0].fromNodeLabel : 'Starting point';
 
       return {
-        summary: `您的思考路径从 ${startNode} 开始，经过了 ${nodeNames.join(' → ')} 等节点。这表明您关注的是问题的${nodeNames.length > 2 ? '多个方面和深度' : '基本方面'}。`,
+        summary: `Your thinking path started from ${startNode}, and went through ${nodeNames.join(' → ')} nodes. This indicates you're focusing on ${nodeNames.length > 2 ? 'multiple aspects and depth' : 'basic aspects'} of the issue.`,
         insights: [
-          `您的思考路径展现了${nodeNames.includes('分析问题') ? '分析性' : '探索性'}思维模式。`,
-          `您在思考过程中特别关注了${nodeNames[Math.floor(nodeNames.length / 2)]}这个环节。`,
-          `您的思考路径展现了${this.userPath.length > 3 ? '深度思考' : '广度探索'}的特点。`
+          `Your thinking path demonstrates a ${nodeNames.includes('Problem Analysis') ? 'analytical' : 'exploratory'} thinking pattern.`,
+          `During your thinking process, you particularly focused on the ${nodeNames[Math.floor(nodeNames.length / 2)]} stage.`,
+          `Your thinking path shows characteristics of ${this.userPath.length > 3 ? 'deep thinking' : 'broad exploration'}.`
         ],
         recommendations: [
-          `建议您可以进一步探索${nodeNames[nodeNames.length - 1]}的相关内容。`,
-          `考虑将${startNode}和${nodeNames[nodeNames.length - 1]}进行对比分析。`,
-          `尝试从不同角度思考这个问题，例如从相反的角度分析。`
+          `We suggest you further explore content related to ${nodeNames[nodeNames.length - 1]}.`,
+          `Consider comparing ${startNode} and ${nodeNames[nodeNames.length - 1]}.`,
+          `Try thinking about this issue from different angles, such as analyzing from the opposite perspective.`
         ]
       };
     },
 
-    // 关闭路径分析
+    // Close path analysis
     closePathAnalysis() {
       this.showPathAnalysis = false;
     },
 
-    // 显示保存路径对话框
+    // Show save path dialog
     showSavePath() {
-      this.newPathName = `思考路径 ${this.savedPaths.length + 1}`;
+      this.newPathName = `Campaign ${this.savedPaths.length + 1}`;
       this.showSavePathDialog = true;
     },
 
-    // 保存当前思考路径
+    // Save current thinking path
     saveCurrentPath() {
       if (!this.newPathName.trim()) {
-        alert('请输入路径名称');
+        alert('Please enter a path name');
         return;
       }
 
       if (this.userPath.length === 0) {
-        alert('还没有思考路径可保存');
+        alert('No campaign path to save');
         return;
       }
 
-      // 创建路径对象
+      // Create path object
       const pathToSave = {
         id: `path_${Date.now()}`,
         name: this.newPathName,
@@ -1056,10 +1166,10 @@ const app = Vue.createApp({
         })
       };
 
-      // 添加到保存的路径中
+      // Add to saved paths
       this.savedPaths.push(pathToSave);
 
-      // 尝试保存到本地存储
+      // Try to save to local storage
       try {
         localStorage.setItem('savedPaths', JSON.stringify(this.savedPaths));
       } catch (e) {
@@ -1067,17 +1177,17 @@ const app = Vue.createApp({
       }
 
       this.showSavePathDialog = false;
-      alert(`路径 "${this.newPathName}" 已保存成功！`);
+      alert(`Campaign "${this.newPathName}" has been saved successfully!`);
     },
 
-    // 取消保存路径
+    // Cancel save path
     cancelSavePath() {
       this.showSavePathDialog = false;
     },
 
-    // 显示加载路径对话框
+    // Show load path dialog
     showLoadPath() {
-      // 尝试从本地存储加载路径
+      // Try to load paths from local storage
       try {
         const savedPathsStr = localStorage.getItem('savedPaths');
         if (savedPathsStr) {
@@ -1090,63 +1200,63 @@ const app = Vue.createApp({
       this.showLoadPathDialog = true;
     },
 
-    // 加载选中的路径
+    // Load selected path
     loadSelectedPath(path) {
-      // 清除当前路径
+      // Clear current path
       this.userPath = [];
 
-      // 重置图形
+      // Reset graph
       this.resetView();
 
-      // 加载保存的路径
+      // Load saved path
       this.userPath = JSON.parse(JSON.stringify(path.path));
 
-      // 高亮显示路径
+      // Highlight path
       this.highlightPath();
 
-      // 如果有节点，选中最后一个节点
+      // If there are nodes, select the last one
       if (this.userPath.length > 0) {
         const lastStep = this.userPath[this.userPath.length - 1];
         const lastNodeId = lastStep.toNodeId;
         const lastNode = mindMapData[lastNodeId];
 
         if (lastNode) {
-          // 选中节点
+          // Select node
           this.selectedNode.id = lastNodeId;
           this.selectedNode.label = lastNode.label;
           this.selectedNode.details = lastNode.details;
           this.selectedNode.options = lastNode.options;
           this.showNodeDetails = true;
 
-          // 更新节点详情面板位置
+          // Update node details panel position
           const element = this.graph.getCell(lastNodeId);
           if (element) {
             const position = element.position();
             this.nodeDetailsStyle.top = `${position.y + 80}px`;
             this.nodeDetailsStyle.left = `${position.x + 80}px`;
 
-            // 将视图中心定位到该节点
+            // Center view on this node
             this.paper.translate(
               this.paper.el.clientWidth / 2 - position.x - element.size().width / 2,
               this.paper.el.clientHeight / 2 - position.y - element.size().height / 2
             );
           }
 
-          // 所有节点都显示AI生成按钮
+          // Show AI generate button for all nodes
           this.showAIGenerateButton = true;
         }
       }
 
       this.showLoadPathDialog = false;
-      alert(`路径 "${path.name}" 已加载成功！`);
+      alert(`Campaign "${path.name}" has been loaded successfully!`);
     },
 
-    // 删除保存的路径
+    // Delete saved path
     deleteSelectedPath(index) {
-      if (confirm(`确定要删除路径 "${this.savedPaths[index].name}" 吗？`)) {
+      if (confirm(`Are you sure you want to delete campaign "${this.savedPaths[index].name}"?`)) {
         this.savedPaths.splice(index, 1);
 
-        // 更新本地存储
+        // Update local storage
         try {
           localStorage.setItem('savedPaths', JSON.stringify(this.savedPaths));
         } catch (e) {
@@ -1155,19 +1265,19 @@ const app = Vue.createApp({
       }
     },
 
-    // 取消加载路径
+    // Cancel load path
     cancelLoadPath() {
       this.showLoadPathDialog = false;
     },
 
-    // 导出思考路径
+    // Export thinking path
     exportPath() {
       if (this.userPath.length === 0) {
-        alert('还没有思考路径可导出');
+        alert('No campaign path to export');
         return;
       }
 
-      // 创建要导出的数据
+      // Create data to export
       const exportData = {
         path: this.userPath,
         nodes: this.userPath.map(step => {
@@ -1179,16 +1289,16 @@ const app = Vue.createApp({
         }),
         timestamp: new Date().toISOString(),
         metadata: {
-          title: 'AI Critical Thinking Tool - Exported Path',
-          description: `思考路径从 ${this.userPath[0].fromNodeLabel} 开始，经过 ${this.userPath.length} 个节点`
+          title: 'AI Advertising Campaign Planner - Exported Path',
+          description: `Campaign path starts from ${this.userPath[0].fromNodeLabel}, going through ${this.userPath.length} nodes`
         }
       };
 
-      // 创建并下载文件
+      // Create and download file
       const dataStr = JSON.stringify(exportData, null, 2);
       const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
-      const exportFileDefaultName = `thinking-path-${new Date().toISOString().slice(0, 10)}.json`;
+      const exportFileDefaultName = `campaign-path-${new Date().toISOString().slice(0, 10)}.json`;
 
       const linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
@@ -1196,7 +1306,7 @@ const app = Vue.createApp({
       linkElement.click();
     },
 
-    // 导入思考路径
+    // Import thinking path
     importPath() {
       const input = document.createElement('input');
       input.type = 'file';
@@ -1211,15 +1321,15 @@ const app = Vue.createApp({
           try {
             const importedData = JSON.parse(event.target.result);
 
-            // 验证导入的数据
+            // Validate imported data
             if (!importedData.path || !Array.isArray(importedData.path)) {
-              throw new Error('无效的路径数据格式');
+              throw new Error('Invalid path data format');
             }
 
-            // 创建要保存的路径
+            // Create path to save
             const pathToSave = {
               id: `path_${Date.now()}`,
-              name: `导入的路径 ${new Date().toLocaleString()}`,
+              name: `Imported Campaign ${new Date().toLocaleString()}`,
               path: importedData.path,
               timestamp: new Date().toISOString(),
               nodes: importedData.nodes || importedData.path.map(step => ({
@@ -1228,20 +1338,20 @@ const app = Vue.createApp({
               }))
             };
 
-            // 添加到保存的路径中
+            // Add to saved paths
             this.savedPaths.push(pathToSave);
 
-            // 更新本地存储
+            // Update local storage
             try {
               localStorage.setItem('savedPaths', JSON.stringify(this.savedPaths));
             } catch (e) {
               console.error('Failed to save imported path to localStorage:', e);
             }
 
-            alert(`路径已成功导入，并保存为 "${pathToSave.name}"。您可以从加载路径菜单中打开它。`);
+            alert(`Campaign successfully imported and saved as "${pathToSave.name}". You can open it from the Load Campaign menu.`);
 
           } catch (error) {
-            alert(`导入失败: ${error.message}`);
+            alert(`Import failed: ${error.message}`);
             console.error('Import error:', error);
           }
         };
@@ -1252,14 +1362,14 @@ const app = Vue.createApp({
       input.click();
     },
 
-    // 显示路径比较对话框
+    // Show path comparison dialog
     showComparePathDialog() {
       if (this.userPath.length === 0) {
-        alert('还没有当前思考路径可供比较');
+        alert('No current campaign path available for comparison');
         return;
       }
 
-      // 尝试从本地存储加载路径
+      // Try to load paths from local storage
       try {
         const savedPathsStr = localStorage.getItem('savedPaths');
         if (savedPathsStr) {
@@ -1270,46 +1380,46 @@ const app = Vue.createApp({
       }
 
       if (this.savedPaths.length === 0) {
-        alert('没有保存的路径可供比较，请先保存当前路径或加载其他路径');
+        alert('No saved campaigns available for comparison. Please save the current campaign or load another one first.');
         return;
       }
 
       this.showPathComparisonDialog = true;
     },
 
-    // 比较选中的路径
+    // Compare with selected path
     compareWithPath(path) {
       this.comparisonPath = path;
 
-      // 生成比较分析
+      // Generate comparison analysis
       this.pathComparisonResult = this.generatePathComparison(this.userPath, path.path);
 
       this.showPathComparisonDialog = false;
       this.showPathComparison = true;
     },
 
-    // 生成路径比较分析
+    // Generate path comparison analysis
     generatePathComparison(currentPath, comparisonPath) {
-      // 获取路径信息
+      // Get path information
       const currentPathNodes = currentPath.map(step => step.toNodeLabel);
       const comparisonPathNodes = comparisonPath.map(step => step.toNodeLabel);
 
-      // 找出共同节点
+      // Find common nodes
       const commonNodes = currentPathNodes.filter(node => comparisonPathNodes.includes(node));
 
-      // 找出不同节点
+      // Find different nodes
       const uniqueCurrentNodes = currentPathNodes.filter(node => !comparisonPathNodes.includes(node));
       const uniqueComparisonNodes = comparisonPathNodes.filter(node => !currentPathNodes.includes(node));
 
-      // 计算路径长度差异
+      // Calculate path length difference
       const lengthDifference = Math.abs(currentPath.length - comparisonPath.length);
 
-      // 计算相似度
+      // Calculate similarity
       const similarity = commonNodes.length / Math.max(currentPathNodes.length, comparisonPathNodes.length);
 
-      // 生成比较结果
+      // Generate comparison results
       return {
-        currentPathName: '当前路径',
+        currentPathName: 'Current Campaign',
         comparisonPathName: this.comparisonPath.name,
         currentPathLength: currentPath.length,
         comparisonPathLength: comparisonPath.length,
@@ -1319,41 +1429,41 @@ const app = Vue.createApp({
         lengthDifference,
         similarity: Math.round(similarity * 100),
         insights: [
-          `两条路径的相似度为 ${Math.round(similarity * 100)}%，${similarity > 0.7 ? '非常相似' : similarity > 0.4 ? '有一定相似性' : '差异较大'}。`,
-          `两条路径共有 ${commonNodes.length} 个相同的节点，分别有 ${uniqueCurrentNodes.length} 和 ${uniqueComparisonNodes.length} 个独有节点。`,
-          `当前路径长度为 ${currentPath.length}，比较路径长度为 ${comparisonPath.length}，差异为 ${lengthDifference} 个节点。`
+          `The similarity between the two campaigns is ${Math.round(similarity * 100)}%, which indicates they are ${similarity > 0.7 ? 'very similar' : similarity > 0.4 ? 'somewhat similar' : 'quite different'}.`,
+          `The two campaigns share ${commonNodes.length} common nodes, with ${uniqueCurrentNodes.length} and ${uniqueComparisonNodes.length} unique nodes respectively.`,
+          `The current campaign has ${currentPath.length} nodes, while the comparison campaign has ${comparisonPath.length}, with a difference of ${lengthDifference} nodes.`
         ],
         recommendations: [
-          uniqueComparisonNodes.length > 0 ? `可以考虑探索比较路径中的独有节点: ${uniqueComparisonNodes.join(', ')}。` : '没有可以探索的独有节点。',
-          commonNodes.length > 0 ? `两条路径的共同节点可能是关键思考点: ${commonNodes.join(', ')}。` : '没有共同的思考节点。',
-          similarity < 0.3 ? '两条路径差异较大，可以尝试结合两种思路进行更全面的思考。' : '两条路径有较多相似之处，可以尝试探索更多不同的角度。'
+          uniqueComparisonNodes.length > 0 ? `Consider exploring the unique nodes in the comparison campaign: ${uniqueComparisonNodes.join(', ')}.` : 'There are no unique nodes to explore.',
+          commonNodes.length > 0 ? `The common nodes between both campaigns may be key points: ${commonNodes.join(', ')}.` : 'There are no common nodes between the campaigns.',
+          similarity < 0.3 ? 'The two campaigns are quite different. Try combining both approaches for a more comprehensive strategy.' : 'The two campaigns have many similarities. Try exploring more diverse angles.'
         ]
       };
     },
 
-    // 关闭路径比较
+    // Close path comparison
     closePathComparison() {
       this.showPathComparison = false;
       this.comparisonPath = null;
     },
 
-    // 取消路径比较
+    // Cancel path comparison
     cancelPathComparison() {
       this.showPathComparisonDialog = false;
     },
 
-    // 显示分享对话框
+    // Show share dialog
     showShare() {
       if (this.userPath.length === 0) {
-        alert('还没有思考路径可供分享');
+        alert('No campaign path available to share');
         return;
       }
 
-      // 生成分享链接
-      // 在实际应用中，这里应该将数据发送到后端生成真实的分享链接
+      // Generate share link
+      // In a real application, this would send data to the backend to generate a real share link
 
-      // 在实际应用中，这里应该调用后端 API 生成真实的分享链接
-      // 这里我们模拟一个链接
+      // In a real application, this would call a backend API to generate a real share link
+      // Here we simulate a link
       const shareId = Math.random().toString(36).substring(2, 10);
       this.shareLink = `https://example.com/share/${shareId}`;
 
@@ -1361,15 +1471,15 @@ const app = Vue.createApp({
       this.showShareDialog = true;
     },
 
-    // 分享路径
+    // Share path
     sharePath() {
-      // 在实际应用中，这里应该将分享数据发送到后端
-      alert(`分享链接已生成: ${this.shareLink}\n\n在实际应用中，这个链接将允许其他人查看您的思考路径。`);
+      // In a real application, this would send share data to the backend
+      alert(`Share link generated: ${this.shareLink}\n\nIn a real application, this link would allow others to view your campaign path.`);
 
-      // 尝试复制到剪贴板
+      // Try to copy to clipboard
       try {
         navigator.clipboard.writeText(this.shareLink).then(() => {
-          alert('链接已复制到剪贴板！');
+          alert('Link copied to clipboard!');
         });
       } catch (e) {
         console.error('Failed to copy link:', e);
@@ -1378,74 +1488,74 @@ const app = Vue.createApp({
       this.showShareDialog = false;
     },
 
-    // 取消分享
+    // Cancel share
     cancelShare() {
       this.showShareDialog = false;
     },
 
-    // 显示评论对话框
+    // Show comments dialog
     showComments() {
-      // 模拟加载评论
+      // Simulate loading comments
       this.loadComments();
       this.showCommentsDialog = true;
     },
 
-    // 加载评论
+    // Load comments
     loadComments() {
-      // 在实际应用中，这里应该从后端加载评论
-      // 这里我们模拟一些评论
+      // In a real application, this would load comments from the backend
+      // Here we simulate some comments
       this.comments = [
         {
           id: 1,
-          author: '用户A',
-          text: '这个思考路径很有含量，特别是在分析问题的部分。',
-          timestamp: new Date(Date.now() - 86400000).toISOString() // 1天前
+          author: 'User A',
+          text: 'This campaign path is very insightful, especially in the problem analysis section.',
+          timestamp: new Date(Date.now() - 86400000).toISOString() // 1 day ago
         },
         {
           id: 2,
-          author: '用户B',
-          text: '我认为可以在“识别潜在偏见”这个方面再深入一些。',
-          timestamp: new Date(Date.now() - 3600000).toISOString() // 1小时前
+          author: 'User B',
+          text: 'I think we could go deeper on the "Identifying Potential Biases" aspect.',
+          timestamp: new Date(Date.now() - 3600000).toISOString() // 1 hour ago
         }
       ];
     },
 
-    // 添加评论
+    // Add comment
     addComment() {
       if (!this.newComment.trim()) {
-        alert('请输入评论内容');
+        alert('Please enter a comment');
         return;
       }
 
-      // 创建新评论
+      // Create new comment
       const comment = {
         id: this.comments.length + 1,
-        author: '当前用户', // 实际应用中应该使用真实用户名
+        author: 'Current User', // In a real application, this would use the actual username
         text: this.newComment,
         timestamp: new Date().toISOString()
       };
 
-      // 添加到评论列表
+      // Add to comments list
       this.comments.push(comment);
 
-      // 清空输入
+      // Clear input
       this.newComment = '';
 
-      // 在实际应用中，这里应该将评论发送到后端
+      // In a real application, this would send the comment to the backend
     },
 
-    // 关闭评论对话框
+    // Close comments dialog
     closeComments() {
       this.showCommentsDialog = false;
     },
 
-    // 格式化时间
+    // Format time
     formatTime(timestamp) {
       const date = new Date(timestamp);
       return date.toLocaleString();
     },
 
-    // 保存节点评价
+    // Save node feedback
     saveNodeRating() {
       if (!this.nodeRating.trim()) {
         return;
@@ -1454,22 +1564,22 @@ const app = Vue.createApp({
       const nodeId = this.selectedNode.id;
       if (!nodeId) return;
 
-      // 初始化节点评价历史
+      // Initialize node feedback history
       if (!this.nodeRatings[nodeId]) {
         this.nodeRatings[nodeId] = [];
       }
 
-      // 添加新评价
+      // Add new feedback
       this.nodeRatings[nodeId].push({
         id: Date.now(),
         text: this.nodeRating,
         timestamp: new Date().toISOString()
       });
 
-      // 清空输入
+      // Clear input
       this.nodeRating = '';
 
-      // 尝试保存到本地存储
+      // Try to save to local storage
       try {
         localStorage.setItem('nodeRatings', JSON.stringify(this.nodeRatings));
       } catch (e) {
@@ -1477,7 +1587,7 @@ const app = Vue.createApp({
       }
     },
 
-    // 加载节点评价
+    // Load node feedback
     loadNodeRatings() {
       try {
         const savedRatings = localStorage.getItem('nodeRatings');
@@ -1489,19 +1599,19 @@ const app = Vue.createApp({
       }
     },
 
-    // 显示文生图对话框
+    // Show image generator dialog
     showImageGenerator() {
-      // 生成正面提示词
+      // Generate prompts from selected node
       this.generatePromptsFromSelectedNode();
 
       this.showImageGenDialog = true;
     },
 
-    // 从选中节点生成提示词
+    // Generate prompts from selected node
     generatePromptsFromSelectedNode() {
       if (!this.selectedNode || !this.selectedNode.id) {
-        this.positivePrompt = '';
-        this.negativePrompt = '';
+        this.positivePrompt = 'professional advertising campaign, high quality, commercial photography';
+        this.negativePrompt = 'amateur, low quality, blurry, distorted';
         return;
       }
 
@@ -1509,115 +1619,191 @@ const app = Vue.createApp({
       const node = mindMapData[nodeId];
 
       if (!node) {
-        this.positivePrompt = '';
-        this.negativePrompt = '';
+        this.positivePrompt = 'professional advertising campaign, high quality, commercial photography';
+        this.negativePrompt = 'amateur, low quality, blurry, distorted';
         return;
       }
 
-      // 使用当前节点作为正面提示词
-      this.positivePrompt = `${node.label}, ${node.details.split('.')[0]}`;
+      // Use current node as positive prompt with advertising focus
+      this.positivePrompt = `${node.label}, ${node.details.split('.')[0]}, professional advertising visual, high quality, commercial photography`;
 
-      // 获取所有节点ID
+      // Get all node IDs
       const allNodeIds = Object.keys(mindMapData);
 
-      // 收集反面提示词（不是当前节点的节点）
+      // Collect negative prompts (nodes that are not the current node)
       const negativeNodeIds = allNodeIds.filter(id => id !== nodeId && id !== 'root');
       const negativeKeywords = negativeNodeIds
         .map(id => mindMapData[id])
-        .filter(n => n) // 过滤掉不存在的节点
+        .filter(n => n) // Filter out non-existent nodes
         .map(n => n.label);
 
-      // 设置反面提示词
-      this.negativePrompt = negativeKeywords.join(', ');
+      // Set negative prompt with advertising focus
+      this.negativePrompt = `${negativeKeywords.join(', ')}, amateur, low quality, blurry, distorted, unprofessional`;
     },
 
-    // 生成提示词
+    // Generate prompts
     generatePrompts() {
-      // 获取当前路径节点
+      // Get current path nodes
       const pathNodeIds = this.userPath.map(step => step.toNodeId);
       const pathNodes = pathNodeIds.map(id => mindMapData[id]);
 
-      // 收集正面提示词
+      // Collect positive prompts
       const positiveKeywords = pathNodes
-        .filter(node => node) // 过滤掉不存在的节点
+        .filter(node => node) // Filter out non-existent nodes
         .map(node => {
-          // 使用节点标签和详情作为关键词
+          // Use node label and details as keywords
           return `${node.label}, ${node.details.split('.')[0]}`;
         });
 
-      // 获取所有节点ID
+      // Get all node IDs
       const allNodeIds = Object.keys(mindMapData);
 
-      // 收集反面提示词（不在路径中的节点）
+      // Collect negative prompts (nodes that are not in the path)
       const negativeNodeIds = allNodeIds.filter(id => !pathNodeIds.includes(id) && id !== 'root');
       const negativeKeywords = negativeNodeIds
         .map(id => mindMapData[id])
-        .filter(node => node) // 过滤掉不存在的节点
+        .filter(node => node) // Filter out non-existent nodes
         .map(node => node.label);
 
-      // 设置提示词
-      this.positivePrompt = positiveKeywords.join(', ');
-      this.negativePrompt = negativeKeywords.join(', ');
+      // Set prompts with advertising focus
+      this.positivePrompt = `${positiveKeywords.join(', ')}, professional advertising visual, high quality, commercial photography`;
+      this.negativePrompt = `${negativeKeywords.join(', ')}, amateur, low quality, blurry, distorted, unprofessional`;
     },
 
-    // 生成图像
+    // Generate image
     generateImage() {
       if (!this.positivePrompt.trim()) {
-        alert('请输入正面提示词');
+        alert('Please enter a positive prompt first');
         return;
       }
 
       this.isGeneratingImage = true;
+      console.log('Starting image generation...');
 
-      // 模拟图像生成
+      // Simulate image generation
       setTimeout(() => {
-        // 在实际应用中，这里应该调用文生图 API
-        // 这里我们使用随机图像模拟
+        // In a real application, this would call a text-to-image API
+        // Here we use a random image to simulate the result
         const imageSize = 512;
         const randomId = Math.floor(Math.random() * 1000);
         const imageUrl = `https://picsum.photos/seed/${randomId}/${imageSize}`;
+        console.log('Image URL generated:', imageUrl);
 
-        // 确保选中了节点
+        // Make sure a node is selected
         if (!this.selectedNode || !this.selectedNode.id) {
-          alert('请先选择一个节点');
+          alert('Please select a node first');
           this.isGeneratingImage = false;
           return;
         }
 
-        // 创建新图像对象
+        // Create new image object
         const newImage = {
           id: `img_${Date.now()}`,
           url: imageUrl,
           positivePrompt: this.positivePrompt,
           negativePrompt: this.negativePrompt,
           timestamp: new Date().toISOString(),
-          pathNodeIds: [],  // 不再依赖用户路径
-          sourceNodeId: this.selectedNode.id // 添加源节点ID
+          pathNodeIds: [],  // No longer dependent on user path
+          sourceNodeId: this.selectedNode.id // Add source node ID
         };
+        console.log('New image object created:', newImage);
 
-        // 添加到图像列表
+        // Add to image list
         this.generatedImages.unshift(newImage);
         this.generatedImage = imageUrl;
+        console.log('Current image list length:', this.generatedImages.length);
 
-        // 尝试保存到本地存储
+        // Save to local storage
         try {
           localStorage.setItem('generatedImages', JSON.stringify(this.generatedImages));
+          console.log('Image list saved to local storage');
         } catch (e) {
           console.error('Failed to save generated images to localStorage:', e);
         }
 
-        // 为当前节点添加图像缩略图子节点
-        this.addImageThumbnailNode(newImage);
+        // Check if image is available
+        window.customJointUtils.checkImageLoaded(imageUrl, (isLoaded) => {
+          if (isLoaded) {
+            console.log('Image loaded successfully, adding to node');
+            // Add image thumbnail node for current node
+            this.addImageThumbnailNode(newImage);
+          } else {
+            console.error('Image loading failed:', imageUrl);
+            alert('Image loading failed, please try generating again');
+          }
+        });
+
+        // Force view update
+        this.$nextTick(() => {
+          // Ensure thumbnails container is visible
+          const thumbnailsContainer = document.getElementById('thumbnails-container');
+          if (thumbnailsContainer) {
+            thumbnailsContainer.style.display = 'block';
+            thumbnailsContainer.style.visibility = 'visible';
+            thumbnailsContainer.style.opacity = '1';
+            console.log('Thumbnails container set to visible');
+
+            // Force update thumbnail content
+            const scrollContainer = thumbnailsContainer.querySelector('.thumbnails-scroll');
+            if (scrollContainer) {
+              // Clear and re-add all images
+              scrollContainer.innerHTML = '';
+
+              // 手动创建缩略图元素
+              this.generatedImages.forEach(image => {
+                const thumbnailItem = document.createElement('div');
+                thumbnailItem.className = 'thumbnail-item';
+                thumbnailItem.onclick = () => this.viewThumbnail(image);
+
+                const thumbnailImage = document.createElement('div');
+                thumbnailImage.className = 'thumbnail-image';
+
+                const img = document.createElement('img');
+                img.src = image.url;
+                img.alt = 'Ad visual ' + image.id;
+                img.title = this.formatTime(image.timestamp);
+
+                thumbnailImage.appendChild(img);
+                thumbnailItem.appendChild(thumbnailImage);
+
+                const thumbnailInfo = document.createElement('div');
+                thumbnailInfo.className = 'thumbnail-info';
+
+                const dateSpan = document.createElement('span');
+                dateSpan.className = 'thumbnail-date';
+                dateSpan.textContent = this.formatTime(image.timestamp).split(' ')[0];
+
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.className = 'thumbnail-delete';
+                deleteButton.textContent = '\u00D7'; // × is the multiplication sign (×)
+                deleteButton.onclick = (e) => {
+                  e.stopPropagation();
+                  this.deleteImage(image.id);
+                };
+
+                thumbnailInfo.appendChild(dateSpan);
+                thumbnailInfo.appendChild(deleteButton);
+                thumbnailItem.appendChild(thumbnailInfo);
+
+                scrollContainer.appendChild(thumbnailItem);
+              });
+
+              console.log('Manually created', this.generatedImages.length, 'thumbnails');
+            }
+          }
+        });
 
         this.isGeneratingImage = false;
         this.showImageGenDialog = false;
         this.showGeneratedImage = true;
+        console.log('Image generation completed');
       }, 2000);
     },
 
-    // 为节点添加图像缩略图子节点
+    // Add image thumbnail node for a node
     addImageThumbnailNode(image) {
-      // 获取源节点ID
+      // Get source node ID
       const sourceNodeId = image.sourceNodeId || this.selectedNode.id;
       const sourceNode = mindMapData[sourceNodeId];
 
@@ -1626,75 +1812,77 @@ const app = Vue.createApp({
         return;
       }
 
-      // 创建图像节点ID
+      // Create image node ID
       const imageNodeId = `image_node_${image.id}`;
 
-      // 创建图像节点数据
+      // Create image node data
       mindMapData[imageNodeId] = {
         id: imageNodeId,
-        label: '生成的图像',
+        label: 'Generated Ad Visual',
         details: `基于“${sourceNode.label}”生成的图像\n\n正面提示词: ${image.positivePrompt}\n反面提示词: ${image.negativePrompt}`,
         options: [],
         imageUrl: image.url,
         timestamp: image.timestamp
       };
 
-      // 如果源节点没有options属性，创建一个
+      // If source node doesn't have options property, create one
       if (!sourceNode.options) {
         sourceNode.options = [];
       }
 
-      // 添加选项到源节点
+      // Add option to source node
       sourceNode.options.push({
         id: `option_to_image_${image.id}`,
-        text: '生成的图像',
+        text: 'Generated Ad Visual',
         nextNode: imageNodeId
       });
 
-      // 获取源节点元素
+      // Get source node element
       const sourceElement = this.graph.getCell(sourceNodeId);
       if (sourceElement) {
-        // 获取源节点位置和层级
+        // Get source node position and level
         const sourcePosition = sourceElement.position();
         const sourceLevel = sourceElement.get('level') || 0;
 
-        // 创建图像节点，使用特殊样式
+        // Create image node with special style
         const imageNode = this.createImageNodeShape(
           imageNodeId,
-          '生成的图像',
+          'Generated Ad Visual',
           sourcePosition.x + 200,
           sourcePosition.y + 100,
           sourceLevel + 1,
           image.url
         );
 
-        // 设置层级
+        // Set level
         imageNode.set('level', sourceLevel + 1);
 
-        // 创建连线
+        // Create link
         const link = this.createLink(sourceNodeId, imageNodeId);
 
-        // 添加到图中
+        // Add to graph
         this.graph.addCells([imageNode, link]);
 
-        // 更新选中节点的选项
+        // Update selected node options
         if (sourceNodeId === this.selectedNode.id) {
           this.selectedNode.options = sourceNode.options;
         }
       }
     },
 
-    // 创建图像节点形状
+    // Create image node shape
     createImageNodeShape(id, label, x, y, _level = 0, imageUrl) {
-      // 根据层级选择颜色
-      const fillColor = '#9c27b0'; // 紫色为图像节点
+      // Choose color based on level
+      const fillColor = '#9c27b0'; // Purple for image nodes
       const strokeColor = '#7b1fa2';
 
-      // 创建自定义图像节点
+      console.log('Creating image node:', id, 'Image URL:', imageUrl);
+
+      // Use standard rectangle and SVG image
       const imageNode = new joint.shapes.standard.Rectangle({
         id: id,
         position: { x, y },
-        size: { width: 160, height: 80 }, // 增加高度以容纳图像
+        size: { width: 160, height: 120 },
         attrs: {
           body: {
             fill: fillColor,
@@ -1712,137 +1900,268 @@ const app = Vue.createApp({
               height: 20,
               ellipsis: true
             },
-            refY: 0.2 // 将文本移到顶部
+            refY: 0.15, // Move text to the top
+            textVerticalAnchor: 'top'
           }
-        }
+        },
+        // Use custom markup to include image
+        markup: [
+          {
+            tagName: 'rect',
+            selector: 'body',
+          },
+          {
+            tagName: 'text',
+            selector: 'label',
+          },
+          {
+            tagName: 'image',
+            selector: 'image',
+          }
+        ]
       });
 
-      // 添加图像元素
-      // 注意：JointJS不直接支持在节点中嵌入图像，我们使用自定义标记
+      // Set image properties
       imageNode.attr({
-        '.image-icon': {
+        image: {
           'xlink:href': imageUrl,
-          width: 40,
-          height: 40,
-          x: 60,
-          y: 30,
-          opacity: 1,
-          refX: 0.5,
-          refY: 0.7
+          width: 120,
+          height: 70,
+          x: 20,
+          y: 35,
+          preserveAspectRatio: 'xMidYMid meet'
         }
       });
 
-      // 添加图像标记
-      imageNode.attr('image', {
-        'xlink:href': imageUrl,
-        width: 40,
-        height: 40,
-        x: 60,
-        y: 30,
-        refX: 0.5,
-        refY: 0.7
-      });
+      // Add custom property to store image URL
+      imageNode.prop('imageUrl', imageUrl);
 
       return imageNode;
     },
 
-    // 保存生成的图像
+    // Save generated image
     saveGeneratedImage() {
-      // 在实际应用中，这里应该提供下载功能
-      // 这里我们模拟下载过程
+      // In a real application, this should provide download functionality
+      // Here we simulate the download process
       const link = document.createElement('a');
       link.href = this.generatedImage;
-      link.download = `ai-thinking-image-${Date.now()}.jpg`;
+      link.download = `ai-advertising-visual-${Date.now()}.jpg`;
       link.click();
     },
 
-    // 关闭图像生成对话框
+    // Close image generator dialog
     closeImageGenerator() {
       this.showImageGenDialog = false;
     },
 
-    // 关闭生成的图像
+    // Close generated image
     closeGeneratedImage() {
       this.showGeneratedImage = false;
     },
 
-    // 加载生成的图像
+    // Load generated images
     loadGeneratedImages() {
       try {
         const savedImages = localStorage.getItem('generatedImages');
         if (savedImages) {
           this.generatedImages = JSON.parse(savedImages);
+          console.log('Loaded', this.generatedImages.length, 'images from local storage');
+
+          // Ensure thumbnails container is visible
+          this.$nextTick(() => {
+            if (this.generatedImages.length > 0) {
+              const thumbnailsContainer = document.getElementById('thumbnails-container');
+              if (thumbnailsContainer) {
+                thumbnailsContainer.style.display = 'block';
+                thumbnailsContainer.style.visibility = 'visible';
+                thumbnailsContainer.style.opacity = '1';
+                console.log('Thumbnails container set to visible');
+
+                // Force update thumbnail content
+                const scrollContainer = thumbnailsContainer.querySelector('.thumbnails-scroll');
+                if (scrollContainer) {
+                  // Clear and re-add all images
+                  scrollContainer.innerHTML = '';
+
+                  // Manually create thumbnail elements
+                  this.generatedImages.forEach(image => {
+                    const thumbnailItem = document.createElement('div');
+                    thumbnailItem.className = 'thumbnail-item';
+                    thumbnailItem.onclick = () => this.viewThumbnail(image);
+
+                    const thumbnailImage = document.createElement('div');
+                    thumbnailImage.className = 'thumbnail-image';
+
+                    const img = document.createElement('img');
+                    img.src = image.url;
+                    img.alt = 'Ad visual ' + image.id;
+                    img.title = this.formatTime(image.timestamp);
+
+                    thumbnailImage.appendChild(img);
+                    thumbnailItem.appendChild(thumbnailImage);
+
+                    const thumbnailInfo = document.createElement('div');
+                    thumbnailInfo.className = 'thumbnail-info';
+
+                    const dateSpan = document.createElement('span');
+                    dateSpan.className = 'thumbnail-date';
+                    dateSpan.textContent = this.formatTime(image.timestamp).split(' ')[0];
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.type = 'button';
+                    deleteButton.className = 'thumbnail-delete';
+                    deleteButton.textContent = '\u00D7'; // × is the multiplication sign (×)
+                    deleteButton.onclick = (e) => {
+                      e.stopPropagation();
+                      this.deleteImage(image.id);
+                    };
+
+                    thumbnailInfo.appendChild(dateSpan);
+                    thumbnailInfo.appendChild(deleteButton);
+                    thumbnailItem.appendChild(thumbnailInfo);
+
+                    scrollContainer.appendChild(thumbnailItem);
+                  });
+
+                  console.log('Manually created', this.generatedImages.length, 'thumbnails');
+                }
+              }
+            }
+          });
+        } else {
+          console.log('No images in local storage');
         }
       } catch (e) {
         console.error('Failed to load generated images from localStorage:', e);
       }
     },
 
-    // 查看缩略图
+    // View thumbnail
     viewThumbnail(image) {
       this.currentViewingImage = image;
       this.showEnlargedImage = true;
     },
 
-    // 关闭放大图像
+    // Close enlarged image
     closeEnlargedImage() {
       this.showEnlargedImage = false;
       this.currentViewingImage = null;
     },
 
-    // 删除图像
+    // Delete image
     deleteImage(imageId) {
       const index = this.generatedImages.findIndex(img => img.id === imageId);
       if (index !== -1) {
-        if (confirm('确定要删除这个图像吗？')) {
+        if (confirm('Are you sure you want to delete this image?')) {
           this.generatedImages.splice(index, 1);
 
-          // 更新本地存储
+          // Update local storage
           try {
             localStorage.setItem('generatedImages', JSON.stringify(this.generatedImages));
           } catch (e) {
             console.error('Failed to update localStorage after image deletion:', e);
           }
 
-          // 如果当前正在查看该图像，关闭放大图
+          // If currently viewing this image, close the enlarged view
           if (this.currentViewingImage && this.currentViewingImage.id === imageId) {
             this.closeEnlargedImage();
           }
+
+          // Force update thumbnails container
+          this.$nextTick(() => {
+            const thumbnailsContainer = document.getElementById('thumbnails-container');
+            if (thumbnailsContainer) {
+              // If no images left, hide container
+              if (this.generatedImages.length === 0) {
+                thumbnailsContainer.style.display = 'none';
+                return;
+              }
+
+              // Force update thumbnail content
+              const scrollContainer = thumbnailsContainer.querySelector('.thumbnails-scroll');
+              if (scrollContainer) {
+                // Clear and re-add all images
+                scrollContainer.innerHTML = '';
+
+                // Manually create thumbnail elements
+                this.generatedImages.forEach(image => {
+                  const thumbnailItem = document.createElement('div');
+                  thumbnailItem.className = 'thumbnail-item';
+                  thumbnailItem.onclick = () => this.viewThumbnail(image);
+
+                  const thumbnailImage = document.createElement('div');
+                  thumbnailImage.className = 'thumbnail-image';
+
+                  const img = document.createElement('img');
+                  img.src = image.url;
+                  img.alt = 'Ad visual ' + image.id;
+                  img.title = this.formatTime(image.timestamp);
+
+                  thumbnailImage.appendChild(img);
+                  thumbnailItem.appendChild(thumbnailImage);
+
+                  const thumbnailInfo = document.createElement('div');
+                  thumbnailInfo.className = 'thumbnail-info';
+
+                  const dateSpan = document.createElement('span');
+                  dateSpan.className = 'thumbnail-date';
+                  dateSpan.textContent = this.formatTime(image.timestamp).split(' ')[0];
+
+                  const deleteButton = document.createElement('button');
+                  deleteButton.type = 'button';
+                  deleteButton.className = 'thumbnail-delete';
+                  deleteButton.textContent = '\u00D7'; // × is the multiplication sign (×)
+                  deleteButton.onclick = (e) => {
+                    e.stopPropagation();
+                    this.deleteImage(image.id);
+                  };
+
+                  thumbnailInfo.appendChild(dateSpan);
+                  thumbnailInfo.appendChild(deleteButton);
+                  thumbnailItem.appendChild(thumbnailInfo);
+
+                  scrollContainer.appendChild(thumbnailItem);
+                });
+
+                console.log('After deletion, recreated', this.generatedImages.length, 'thumbnails');
+              }
+            }
+          });
         }
       }
     },
 
-    // 处理用户初始输入
+    // Process user initial input
     processUserInput() {
       if (!this.userInitialInput.trim()) {
-        alert('请输入您的需求或问题');
+        alert('Please enter your requirement or question');
         return;
       }
 
       this.processingInput = true;
 
-      // 更新根节点数据
-      mindMapData.root.label = '您的需求';
+      // Update root node data
+      mindMapData.root.label = 'Campaign Brief';
       mindMapData.root.details = this.userInitialInput;
 
-      // 清除现有选项
+      // Clear existing options
       mindMapData.root.options = [];
 
-      // 模拟生成多个子节点
+      // Simulate generating multiple child nodes
       setTimeout(() => {
         try {
-          // 生成新的子节点
+          // Generate new child nodes
           this.generateResponseNodes();
 
-          // 切换到思维导图模式
+          // Switch to mind map mode
           this.initialMode = false;
 
-          // 初始化图表（现在不再是初始模式）
+          // Initialize chart (no longer in initial mode)
           this.$nextTick(() => {
-            // 重新初始化图表
+            // Reinitialize chart
             this.initMindMap();
 
-            // 清除用户路径
+            // Clear user path
             this.userPath = [];
 
             this.processingInput = false;
@@ -1850,33 +2169,33 @@ const app = Vue.createApp({
         } catch (error) {
           console.error('Error processing user input:', error);
           this.processingInput = false;
-          alert('处理输入时出错，请重试');
+          alert('Error processing input, please try again');
         }
       }, 2000);
     },
 
-    // 生成响应节点
+    // Generate response nodes
     generateResponseNodes() {
-      // 模拟生成 4-6 个响应节点
+      // Simulate generating 4-6 response nodes
       const responseTypes = [
-        { type: '问题分析', detail: '分析您提出的问题的各个方面和核心要点' },
-        { type: '解决方案', detail: '提供可行的解决方案和实施步骤' },
-        { type: '深入思考', detail: '探索问题背后的深层原因和影响因素' },
-        { type: '替代角度', detail: '从不同的角度和立场看待这个问题' },
-        { type: '潜在风险', detail: '识别可能的风险和需要注意的问题' },
-        { type: '实施计划', detail: '制定具体的行动计划和时间表' }
+        { type: 'Target Audience Analysis', detail: 'Analyze the demographics, psychographics, and behavior of your target audience' },
+        { type: 'Campaign Objectives', detail: 'Define clear, measurable goals for your advertising campaign' },
+        { type: 'Creative Strategy', detail: 'Develop the creative approach, messaging, and visual identity' },
+        { type: 'Media Planning', detail: 'Select the optimal channels and timing for your campaign' },
+        { type: 'Budget Allocation', detail: 'Distribute resources effectively across campaign elements' },
+        { type: 'Performance Metrics', detail: 'Establish KPIs and measurement framework for campaign success' }
       ];
 
-      // 随机选择 4-6 个不同的响应类型
+      // Randomly select 4-6 different response types
       const numResponses = Math.floor(Math.random() * 3) + 4; // 4-6
       const shuffled = [...responseTypes].sort(() => 0.5 - Math.random());
       const selectedResponses = shuffled.slice(0, numResponses);
 
-      // 创建新节点
+      // Create new nodes
       selectedResponses.forEach((response, index) => {
         const nodeId = `response_${index}`;
 
-        // 创建节点数据
+        // Create node data
         mindMapData[nodeId] = {
           id: nodeId,
           label: response.type,
@@ -1884,26 +2203,26 @@ const app = Vue.createApp({
           options: []
         };
 
-        // 添加到根节点的选项中
+        // Add to root node options
         mindMapData.root.options.push({
           id: `option_${index}`,
           text: response.type,
           nextNode: nodeId
         });
 
-        // 为每个响应节点生成 2-3 个子节点
+        // Generate 2-3 child nodes for each response node
         this.generateChildNodes(nodeId, 2);
       });
     },
 
-    // 为指定节点生成子节点
+    // Generate child nodes for specified node
     generateChildNodes(parentId, depth) {
       if (depth <= 0) return;
 
       const parent = mindMapData[parentId];
       if (!parent) return;
 
-      // 根据父节点类型生成子节点
+      // Generate child nodes based on parent node type
       const numChildren = Math.floor(Math.random() * 2) + 2; // 2-3
 
       for (let i = 0; i < numChildren; i++) {
@@ -1911,7 +2230,7 @@ const app = Vue.createApp({
         const childLabel = this.generateChildLabel(parent.label, i);
         const childDetails = this.generateChildDetails(parent.label, childLabel);
 
-        // 创建子节点数据
+        // Create child node data
         mindMapData[childId] = {
           id: childId,
           label: childLabel,
@@ -1919,195 +2238,195 @@ const app = Vue.createApp({
           options: []
         };
 
-        // 添加到父节点的选项中
+        // Add to parent node options
         parent.options.push({
           id: `${parentId}_option_${i}`,
           text: childLabel,
           nextNode: childId
         });
 
-        // 递归生成更深层次的子节点
+        // Recursively generate deeper level child nodes
         this.generateChildNodes(childId, depth - 1);
       }
     },
 
-    // 生成子节点标签
+    // Generate child node label
     generateChildLabel(parentLabel, index) {
-      // 根据父节点类型生成不同的子节点标签
+      // Generate different child node labels based on parent node type
       const labelsByParentType = {
-        '问题分析': [
-          '核心问题', '相关因素', '影响范围', '关键利益方'
+        'Target Audience Analysis': [
+          'Demographics', 'Psychographics', 'Behavioral Analysis', 'Market Segmentation'
         ],
-        '解决方案': [
-          '短期方案', '长期策略', '资源需求', '实施步骤'
+        'Campaign Objectives': [
+          'Awareness Goals', 'Conversion Goals', 'Brand Positioning', 'ROI Targets'
         ],
-        '深入思考': [
-          '根本原因', '系统影响', '潜在机会', '历史经验'
+        'Creative Strategy': [
+          'Key Messaging', 'Visual Identity', 'Content Strategy', 'Brand Voice'
         ],
-        '替代角度': [
-          '用户角度', '管理角度', '技术角度', '商业角度'
+        'Media Planning': [
+          'Channel Selection', 'Scheduling', 'Targeting Strategy', 'Budget Allocation'
         ],
-        '潜在风险': [
-          '技术风险', '资源风险', '时间风险', '外部因素'
+        'Budget Allocation': [
+          'Production Costs', 'Media Spend', 'Agency Fees', 'Contingency'
         ],
-        '实施计划': [
-          '阶段目标', '时间表', '资源分配', '进度跟踪'
+        'Performance Metrics': [
+          'KPIs', 'Measurement Tools', 'Reporting Schedule', 'Success Criteria'
         ]
       };
 
-      // 获取对应父节点类型的标签列表
+      // Get label list corresponding to parent node type
       const labels = labelsByParentType[parentLabel] || [
-        `子项目 ${index + 1}`,
-        `关键点 ${index + 1}`,
-        `考虑因素 ${index + 1}`,
-        `重要方面 ${index + 1}`
+        `Sub-element ${index + 1}`,
+        `Key Point ${index + 1}`,
+        `Consideration ${index + 1}`,
+        `Important Aspect ${index + 1}`
       ];
 
-      // 返回对应索引的标签，或随机选择一个
+      // Return label corresponding to index, or randomly select one
       return labels[index % labels.length] || labels[Math.floor(Math.random() * labels.length)];
     },
 
-    // 生成子节点详情
+    // Generate child node details
     generateChildDetails(parentLabel, childLabel) {
-      // 根据父节点和子节点类型生成详情描述
+      // Generate detail description based on parent and child node types
       const details = {
-        '核心问题': '详细分析问题的核心和本质，找出需要解决的关键点。',
-        '相关因素': '识别影响这个问题的各种因素和条件，包括内部和外部因素。',
-        '影响范围': '评估这个问题的影响范围和程度，包括短期和长期影响。',
-        '关键利益方': '确定与这个问题相关的各方利益相关者及其需求和期望。',
-        '短期方案': '提供可以快速实施的短期解决方案，帮助立即缓解问题。',
-        '长期策略': '制定长期策略和方案，从根本上解决问题并防止再次发生。',
-        '资源需求': '评估实施解决方案所需的资源，包括人力、物力和财力。',
-        '实施步骤': '详细列出实施解决方案的具体步骤和行动计划。'
+        'Demographics': 'Analyze age, gender, income, education, and location of the target audience.',
+        'Psychographics': 'Understand values, interests, attitudes, and lifestyle factors that influence purchasing decisions.',
+        'Behavioral Analysis': 'Examine purchasing patterns, brand loyalty, usage frequency, and decision-making processes.',
+        'Market Segmentation': 'Identify distinct audience segments to tailor messaging and creative approaches.',
+        'Awareness Goals': 'Define objectives for increasing brand recognition and recall among target audiences.',
+        'Conversion Goals': 'Establish specific, measurable targets for customer actions and conversions.',
+        'Brand Positioning': 'Articulate how the brand should be perceived relative to competitors in the market.',
+        'ROI Targets': 'Set clear financial return expectations and measurement criteria for campaign success.'
       };
 
-      // 返回对应的详情，或生成通用详情
-      return details[childLabel] || `这是关于${childLabel}的详细分析和说明，基于${parentLabel}的角度。`;
+      // Return corresponding details, or generate generic details
+      return details[childLabel] || `This is a detailed analysis of ${childLabel}, from the perspective of ${parentLabel}.`;
     },
 
-    // 启用画布拖拽和缩放功能
+    // Enable canvas panning and zooming
     enablePanning() {
       if (!this.paper) return;
 
       let dragStartPosition = null;
-      let currentScale = 1; // 当前缩放比例
+      let currentScale = 1; // Current zoom scale
 
-      // 鼠标按下事件
+      // Mouse down event
       this.paper.on('blank:pointerdown', (_, x, y) => {
         dragStartPosition = { x, y };
 
-        // 添加拖拽样式
+        // Add dragging style
         document.body.style.cursor = 'grabbing';
       });
 
-      // 鼠标移动事件
+      // Mouse move event
       this.paper.on('blank:pointermove', (_, x, y) => {
         if (dragStartPosition) {
-          // 计算移动距离
+          // Calculate movement distance
           const dx = x - dragStartPosition.x;
           const dy = y - dragStartPosition.y;
 
-          // 更新起始位置
+          // Update start position
           dragStartPosition = { x, y };
 
-          // 移动画布
+          // Move canvas
           const currentTranslate = this.paper.translate();
           this.paper.translate(currentTranslate.tx + dx, currentTranslate.ty + dy);
         }
       });
 
-      // 鼠标松开事件
+      // Mouse up event
       this.paper.on('blank:pointerup', () => {
         dragStartPosition = null;
 
-        // 恢复鼠标样式
+        // Restore cursor style
         document.body.style.cursor = 'default';
       });
 
-      // 鼠标离开画布事件
+      // Mouse leave canvas event
       this.paper.el.addEventListener('mouseleave', () => {
         if (dragStartPosition) {
           dragStartPosition = null;
 
-          // 恢复鼠标样式
+          // Restore cursor style
           document.body.style.cursor = 'default';
         }
       });
 
-      // 添加鼠标滚轮缩放功能
+      // Add mouse wheel zoom functionality
       this.paper.el.addEventListener('wheel', (event) => {
-        // 阻止默认滚动行为
+        // Prevent default scroll behavior
         event.preventDefault();
 
-        // 计算缩放比例
+        // Calculate zoom ratio
         const delta = event.deltaY;
-        const scaleChange = delta > 0 ? 0.9 : 1.1; // 缩小或放大
+        const scaleChange = delta > 0 ? 0.9 : 1.1; // Shrink or enlarge
 
-        // 限制缩放范围
+        // Limit zoom range
         const newScale = Math.min(Math.max(currentScale * scaleChange, 0.3), 3);
 
         if (newScale !== currentScale) {
-          // 获取鼠标相对于画布的位置
+          // Get mouse position relative to canvas
           const offsetX = event.offsetX;
           const offsetY = event.offsetY;
 
-          // 获取当前平移
+          // Get current translation
           const translate = this.paper.translate();
 
-          // 计算新的平移位置，使鼠标位置保持不变
+          // Calculate new translation position to keep mouse position fixed
           const newTx = offsetX - (offsetX - translate.tx) * (newScale / currentScale);
           const newTy = offsetY - (offsetY - translate.ty) * (newScale / currentScale);
 
-          // 应用缩放和平移
+          // Apply zoom and translation
           this.paper.scale(newScale);
           this.paper.translate(newTx, newTy);
 
-          // 更新当前缩放比例
+          // Update current zoom ratio
           currentScale = newScale;
         }
       }, { passive: false });
 
-      // 添加缩放控制按钮
+      // Add zoom control buttons
       this.addZoomControls();
     },
 
-    // 添加缩放控制按钮
+    // Add zoom control buttons
     addZoomControls() {
-      // 创建控制器容器
+      // Create controls container
       const controlsContainer = document.createElement('div');
       controlsContainer.className = 'zoom-controls';
 
-      // 创建放大按钮
+      // Create zoom in button
       const zoomInButton = document.createElement('button');
       zoomInButton.innerHTML = '+';
-      zoomInButton.title = '放大';
+      zoomInButton.title = 'Zoom In';
       zoomInButton.addEventListener('click', () => this.zoomIn());
 
-      // 创建缩小按钮
+      // Create zoom out button
       const zoomOutButton = document.createElement('button');
       zoomOutButton.innerHTML = '-';
-      zoomOutButton.title = '缩小';
+      zoomOutButton.title = 'Zoom Out';
       zoomOutButton.addEventListener('click', () => this.zoomOut());
 
-      // 创建重置按钮
+      // Create reset button
       const resetButton = document.createElement('button');
-      resetButton.innerHTML = '重置';
-      resetButton.title = '重置视图';
+      resetButton.innerHTML = 'Reset';
+      resetButton.title = 'Reset View';
       resetButton.addEventListener('click', () => this.resetView());
 
-      // 添加按钮到容器
+      // Add buttons to container
       controlsContainer.appendChild(zoomInButton);
       controlsContainer.appendChild(zoomOutButton);
       controlsContainer.appendChild(resetButton);
 
-      // 添加容器到画布容器
+      // Add container to canvas container
       const mindmapContainer = this.$el.querySelector('.mindmap-container');
       if (mindmapContainer) {
         mindmapContainer.appendChild(controlsContainer);
       }
     },
 
-    // 放大画布
+    // Zoom in canvas
     zoomIn() {
       if (!this.paper) return;
 
@@ -2117,7 +2436,7 @@ const app = Vue.createApp({
       this.paper.scale(newScale);
     },
 
-    // 缩小画布
+    // Zoom out canvas
     zoomOut() {
       if (!this.paper) return;
 
@@ -2127,7 +2446,7 @@ const app = Vue.createApp({
       this.paper.scale(newScale);
     },
 
-    // 重置视图
+    // Reset view
     resetView() {
       if (!this.paper) return;
 
@@ -2135,28 +2454,28 @@ const app = Vue.createApp({
       this.paper.translate(0, 0);
     },
 
-    // 自动整理布局
+    // Auto arrange layout
     autoLayout() {
       if (!this.graph) return;
 
-      // 检查是否有节点
+      // Check if there are nodes
       const elements = this.graph.getElements();
       if (elements.length === 0) {
-        alert('没有节点可以整理');
+        alert('No nodes to arrange');
         return;
       }
 
-      // 检查是否有 DirectedGraph 插件
+      // Check if DirectedGraph plugin exists
       if (!joint.layout || !joint.layout.DirectedGraph) {
         console.error('DirectedGraph layout plugin not found');
-        alert('缺少布局插件，请刷新页面后重试');
+        alert('Layout plugin missing, please refresh the page and try again');
         return;
       }
 
-      // 显示加载中提示
+      // Show loading message
       const loadingMsg = document.createElement('div');
       loadingMsg.className = 'loading-message';
-      loadingMsg.textContent = '正在整理布局...';
+      loadingMsg.textContent = 'Arranging layout...';
       loadingMsg.style.position = 'absolute';
       loadingMsg.style.top = '50%';
       loadingMsg.style.left = '50%';
@@ -2172,44 +2491,44 @@ const app = Vue.createApp({
         container.appendChild(loadingMsg);
       }
 
-      // 使用延时执行，以允许UI更新
+      // Use timeout to allow UI update
       setTimeout(() => {
         try {
-          // 使用简单布局作为备选
+          // Use simple layout as fallback
           if (!this.useSimpleLayout()) {
-            // 如果简单布局失败，尝试使用JointJS的自动布局算法
+            // If simple layout fails, try using JointJS auto layout algorithm
             joint.layout.DirectedGraph.layout(this.graph, {
               setVertices: false,
               setLabels: true,
               ranker: 'network-simplex',
-              rankDir: 'TB', // 从上到下的布局
-              align: 'UL', // 左对齐
-              nodeSep: 80, // 节点间的水平间距
-              edgeSep: 80, // 边之间的水平间距
-              rankSep: 100, // 层与层之间的垂直间距
-              marginX: 50, // 水平边距
-              marginY: 50  // 垂直边距
+              rankDir: 'TB', // Top to bottom layout
+              align: 'UL', // Left align
+              nodeSep: 80, // Horizontal distance between nodes
+              edgeSep: 80, // Horizontal distance between edges
+              rankSep: 100, // Vertical distance between layers
+              marginX: 50, // Horizontal margin
+              marginY: 50  // Vertical margin
             });
           }
 
-          // 微调节点位置，防止重叠
+          // Fine-tune node positions to prevent overlap
           this.adjustNodePositions();
 
-          // 将视图居中
+          // Center the view
           this.centerContent();
 
-          console.log('自动整理完成');
+          console.log('Auto layout completed');
         } catch (error) {
           console.error('Auto layout failed:', error);
-          // 尝试使用简单布局作为备选
+          // Try using simple layout as fallback
           if (!this.useSimpleLayout()) {
-            alert('自动整理失败，请重试');
+            alert('Auto layout failed, please try again');
           } else {
-            // 如果简单布局成功，不显示错误
+            // If simple layout succeeds, don't show error
             this.centerContent();
           }
         } finally {
-          // 移除加载提示
+          // Remove loading message
           if (loadingMsg.parentNode) {
             loadingMsg.parentNode.removeChild(loadingMsg);
           }
@@ -2217,39 +2536,39 @@ const app = Vue.createApp({
       }, 100);
     },
 
-    // 使用简单布局作为备选
+    // Use simple layout as fallback
     useSimpleLayout() {
       try {
         const elements = this.graph.getElements();
         if (elements.length === 0) return false;
 
-        // 找到根节点
+        // Find root node
         const rootElement = this.graph.getCell('root') || elements[0];
         const rootPosition = rootElement.position();
 
-        // 构建节点层次结构
+        // Build node hierarchy structure
         const nodesByLevel = {};
         const processed = new Set();
 
-        // 广度优先遍历构建层次结构
+        // Breadth-first traversal to build hierarchy structure
         const queue = [{ element: rootElement, level: 0 }];
         processed.add(rootElement.id);
 
         while (queue.length > 0) {
           const { element, level } = queue.shift();
 
-          // 初始化当前层的数组
+          // Initialize array for current level
           if (!nodesByLevel[level]) {
             nodesByLevel[level] = [];
           }
 
-          // 添加到当前层
+          // Add to current level
           nodesByLevel[level].push(element);
 
-          // 获取所有出连接
+          // Get all outgoing connections
           const outgoingLinks = this.graph.getConnectedLinks(element, { outbound: true });
 
-          // 遍历所有相连的节点
+          // Traverse all connected nodes
           for (const link of outgoingLinks) {
             const targetId = link.get('target').id;
             const targetElement = this.graph.getCell(targetId);
@@ -2261,47 +2580,47 @@ const app = Vue.createApp({
           }
         }
 
-        // 布局节点
-        const levelHeight = 150; // 层与层之间的垂直距离
+        // Layout nodes
+        const levelHeight = 150; // Vertical distance between layers
 
-        // 对每一层进行布局
+        // Layout each level
         Object.entries(nodesByLevel).forEach(([level, nodes]) => {
           const levelNum = parseInt(level);
           const y = rootPosition.y + levelNum * levelHeight;
 
-          // 计算节点间的水平间距
-          const totalWidth = nodes.length * 180; // 假设每个节点宽度为180
-          const startX = rootPosition.x - totalWidth / 2 + 90; // 居中布局
+          // Calculate horizontal spacing between nodes
+          const totalWidth = nodes.length * 180; // Assume each node width is 180
+          const startX = rootPosition.x - totalWidth / 2 + 90; // Center layout
 
-          // 设置每个节点的位置
+          // Set position for each node
           nodes.forEach((node, index) => {
             node.position(startX + index * 180, y);
           });
         });
 
-        return true; // 表示简单布局成功
+        return true; // Indicates simple layout succeeded
       } catch (error) {
         console.error('Simple layout failed:', error);
-        return false; // 表示简单布局失败
+        return false; // Indicates simple layout failed
       }
     },
 
-    // 调整节点位置，防止重叠
+    // Adjust node positions to prevent overlap
     adjustNodePositions() {
       const elements = this.graph.getElements();
       const nodePositions = {};
       const nodeSize = { width: 160, height: 60 };
-      const padding = 20; // 节点间的最小间距
+      const padding = 20; // Minimum distance between nodes
 
-      // 首先收集所有节点的位置
+      // First collect all node positions
       elements.forEach(element => {
         const position = element.position();
         nodePositions[element.id] = { x: position.x, y: position.y };
       });
 
-      // 检测并解决重叠
+      // Detect and resolve overlaps
       let iterations = 0;
-      const maxIterations = 10; // 防止无限循环
+      const maxIterations = 10; // Prevent infinite loop
       let hasOverlap = true;
 
       while (hasOverlap && iterations < maxIterations) {
@@ -2316,18 +2635,18 @@ const app = Vue.createApp({
             const element2 = elements[j];
             const pos2 = nodePositions[element2.id];
 
-            // 计算两个节点之间的距离
+            // Calculate distance between two nodes
             const dx = Math.abs(pos1.x - pos2.x);
             const dy = Math.abs(pos1.y - pos2.y);
 
-            // 检查是否重叠
+            // Check if overlapping
             const overlapX = dx < (nodeSize.width + padding);
             const overlapY = dy < (nodeSize.height + padding);
 
             if (overlapX && overlapY) {
               hasOverlap = true;
 
-              // 计算需要移动的距离
+              // Calculate distance to move
               const moveX = (nodeSize.width + padding - dx) / 2;
               const moveY = (nodeSize.height + padding - dy) / 2;
 
