@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Critical Thinking Tool</title>
+
+    <!-- JointJS dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/backbone@1.4.0/backbone-min.js"></script>
+
+    <!-- JointJS library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jointjs@3.7.5/dist/joint.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jointjs@3.7.5/dist/joint.min.js"></script>
+
+    <!-- JointJS Plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/jointjs@3.7.5/dist/joint.layout.DirectedGraph.min.js"></script>
+
+    <!-- Vue.js (production version) -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.prod.js"></script>
+
+    <!-- Custom CSS -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      .app-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      header {
+        background-color: #4a5568;
+        color: white;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header-actions button {
+        background-color: #2d3748;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 12px;
+        margin-left: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        font-size: 0.85rem;
+      }
+
+      .header-actions button:hover {
+        background-color: #1a202c;
+      }
+
+      .header-actions button:disabled {
+        background-color: #718096;
+        cursor: not-allowed;
+      }
+
+      .header-actions .image-btn {
+        background-color: #805ad5;
+      }
+
+      .header-actions .image-btn:hover {
+        background-color: #6b46c1;
+      }
+
+      .header-actions .layout-btn {
+        background-color: #38a169;
+      }
+
+      .header-actions .layout-btn:hover {
+        background-color: #2f855a;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .mindmap-wrapper {
+        position: relative;
+        flex: 1;
+        overflow: hidden;
+        height: calc(100vh - 60px); /* Subtract header height */
+        display: flex;
+        flex-direction: column;
+      }
+
+      .mindmap-container {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* 缩略图区域样式 */
+      .thumbnails-container {
+        position: relative;
+        height: 120px;
+        background-color: #f8f9fa;
+        border-top: 1px solid #e2e8f0;
+        padding: 10px;
+        overflow: hidden;
+        display: block !important; /* 强制显示 */
+        z-index: 100; /* 确保在顶层 */
+      }
+
+      .thumbnails-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .thumbnails-header h4 {
+        margin: 0;
+        color: #4a5568;
+        font-size: 0.9rem;
+      }
+
+      .thumbnails-scroll {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding-bottom: 5px;
+        height: 80px;
+      }
+
+      .thumbnail-item {
+        position: relative;
+        flex: 0 0 auto;
+        width: 80px;
+        height: 80px;
+        border-radius: 4px;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+      }
+
+      .thumbnail-item:hover {
+        transform: scale(1.05);
+      }
+
+      .thumbnail-image {
+        width: 100%;
+        height: 100%;
+      }
+
+      .thumbnail-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .thumbnail-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2px 5px;
+      }
+
+      .thumbnail-date {
+        color: white;
+        font-size: 0.7rem;
+      }
+
+      .thumbnail-delete {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        opacity: 0.7;
+      }
+
+      .thumbnail-delete:hover {
+        opacity: 1;
+      }
+
+      .image-timestamp {
+        margin-top: 10px;
+        color: #718096;
+        font-size: 0.9rem;
+      }
+
+      /* 初始输入界面样式 */
+      .initial-input-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - 60px);
+        background-color: #f8f9fa;
+      }
+
+      .initial-input-container {
+        width: 80%;
+        max-width: 800px;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        text-align: center;
+      }
+
+      .initial-input-container h2 {
+        margin-top: 0;
+        margin-bottom: 30px;
+        color: #2d3748;
+        font-size: 1.8rem;
+      }
+
+      .input-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .input-area textarea {
+        width: 100%;
+        height: 200px;
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        resize: vertical;
+        margin-bottom: 20px;
+      }
+
+      .input-area button {
+        background-color: #4a5568;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .input-area button:hover {
+        background-color: #2d3748;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .input-area button:disabled {
+        background-color: #a0aec0;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .input-tips {
+        margin-top: 20px;
+        color: #718096;
+        font-style: italic;
+      }
+
+      .context-menu {
+        position: absolute;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 5px 0;
+        z-index: 1000;
+      }
+
+      .context-menu-item {
+        padding: 8px 15px;
+        cursor: pointer;
+      }
+
+      .context-menu-item:hover {
+        background-color: #f5f5f5;
+      }
+
+      .node-details {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        padding: 20px;
+        z-index: 900;
+        width: 350px;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+      }
+
+      .node-details h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #2d3748;
+        font-size: 1.2rem;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 10px;
+      }
+
+      .node-actions {
+        margin-top: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .node-actions button {
+        background-color: #4a5568;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .node-actions button:hover {
+        background-color: #2d3748;
+      }
+
+      /* 思考类型按钮样式 */
+      .thinking-type-buttons {
+        margin: 20px 0;
+        display: flex;
+        gap: 10px;
+      }
+
+      .thinking-type-btn {
+        padding: 8px 15px;
+        background-color: #e2e8f0;
+        border: none;
+        border-radius: 6px;
+        color: #4a5568;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .thinking-type-btn:hover {
+        background-color: #cbd5e0;
+      }
+
+      .thinking-type-btn.active {
+        background-color: #4a5568;
+        color: white;
+      }
+
+      /* 缩放控制按钮样式 */
+      .zoom-controls {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        z-index: 800;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 8px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .zoom-controls button {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #cbd5e0;
+        background-color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+
+      .zoom-controls button:hover {
+        background-color: #f7fafc;
+        border-color: #4a5568;
+      }
+
+      .zoom-controls button:last-child {
+        font-size: 12px;
+      }
+
+      .edit-dialog {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+      }
+
+      .edit-dialog-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        width: 400px;
+        max-width: 90%;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .form-group textarea {
+        height: 100px;
+        resize: vertical;
+      }
+
+      .edit-dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .edit-dialog-actions button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .edit-dialog-actions button:first-child {
+        background-color: #4a5568;
+        color: white;
+      }
+
+      .edit-dialog-actions button:last-child {
+        background-color: #e2e8f0;
+        color: #4a5568;
+      }
+
+      .option-item {
+        display: flex;
+        margin-bottom: 8px;
+        align-items: center;
+      }
+
+      .option-item input {
+        flex: 1;
+      }
+
+      .remove-btn {
+        background-color: #e53e3e;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        margin-left: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+
+      .add-option-btn {
+        background-color: #4a5568;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 12px;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      /* AI生成按钮样式 */
+      .ai-generate-button {
+        margin-top: 15px;
+        text-align: center;
+      }
+
+      .ai-generate-button button {
+        background-color: #6b46c1;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 16px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .ai-generate-button button:hover {
+        background-color: #553c9a;
+      }
+
+      /* 模态对话框样式 */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+      }
+
+      .modal-content {
+        background-color: white;
+        padding: 25px;
+        border-radius: 8px;
+        width: 500px;
+        max-width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .modal-actions button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .modal-actions button:first-child {
+        background-color: #4a5568;
+        color: white;
+      }
+
+      .modal-actions button:last-child {
+        background-color: #e2e8f0;
+        color: #4a5568;
+      }
+
+      /* AI选项列表样式 */
+      .ai-options-list {
+        margin-top: 15px;
+      }
+
+      .ai-option-item {
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: flex-start;
+      }
+
+      .ai-option-item:hover {
+        background-color: #f7fafc;
+        border-color: #4a5568;
+      }
+
+      .ai-option-item.selected {
+        background-color: #ebf4ff;
+        border-color: #4299e1;
+      }
+
+      .option-checkbox {
+        margin-right: 12px;
+        padding-top: 2px;
+      }
+
+      .option-checkbox input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+
+      .option-content {
+        flex: 1;
+      }
+
+      .ai-option-item h4 {
+        margin-top: 0;
+        color: #4a5568;
+      }
+
+      .ai-option-item p {
+        margin-bottom: 0;
+        color: #718096;
+        font-size: 0.9rem;
+      }
+
+      /* 路径分析样式 */
+      .path-analysis {
+        width: 600px;
+      }
+
+      .path-analysis-content {
+        margin-top: 15px;
+      }
+
+      .path-analysis-content h4 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        color: #4a5568;
+      }
+
+      .path-analysis-content ul {
+        padding-left: 20px;
+      }
+
+      .path-analysis-content li {
+        margin-bottom: 8px;
+      }
+
+      /* 保存路径列表样式 */
+      .saved-paths-list {
+        margin-top: 15px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .no-paths {
+        padding: 15px;
+        text-align: center;
+        color: #718096;
+        font-style: italic;
+      }
+
+      .saved-path-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      .saved-path-info h4 {
+        margin-top: 0;
+        margin-bottom: 5px;
+        color: #4a5568;
+      }
+
+      .saved-path-info p {
+        margin: 5px 0;
+        color: #718096;
+        font-size: 0.9rem;
+      }
+
+      .saved-path-actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .saved-path-actions button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        background-color: #4a5568;
+        color: white;
+      }
+
+      .saved-path-actions .delete-btn {
+        background-color: #e53e3e;
+      }
+
+      /* 路径比较样式 */
+      .path-comparison-content {
+        margin-top: 15px;
+      }
+
+      .comparison-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .comparison-path {
+        flex: 1;
+        text-align: center;
+      }
+
+      .comparison-vs {
+        padding: 0 15px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #4a5568;
+      }
+
+      .comparison-similarity {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .similarity-bar {
+        height: 20px;
+        background-color: #edf2f7;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .similarity-fill {
+        height: 100%;
+        background-color: #4299e1;
+        border-radius: 10px;
+      }
+
+      .comparison-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .comparison-section h4 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #4a5568;
+      }
+
+      .comparison-section ul {
+        padding-left: 20px;
+        margin: 0;
+      }
+
+      .comparison-section li {
+        margin-bottom: 5px;
+      }
+
+      /* 分享样式 */
+      .share-link {
+        margin: 15px 0;
+      }
+
+      .share-link label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .share-link input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        background-color: #f7fafc;
+      }
+
+      /* 评论样式 */
+      .comments-list {
+        margin-top: 15px;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .no-comments {
+        padding: 15px;
+        text-align: center;
+        color: #718096;
+        font-style: italic;
+      }
+
+      .comment-item {
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .comment-author {
+        font-weight: bold;
+        color: #4a5568;
+      }
+
+      .comment-time {
+        color: #718096;
+        font-size: 0.8rem;
+      }
+
+      .comment-text {
+        color: #2d3748;
+      }
+
+      .add-comment {
+        margin-top: 20px;
+      }
+
+      .add-comment textarea {
+        width: 100%;
+        height: 80px;
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        resize: vertical;
+        margin-bottom: 10px;
+      }
+
+      .add-comment button {
+        background-color: #4a5568;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+
+      /* 节点评价样式 */
+      .node-rating {
+        margin: 15px 0;
+      }
+
+      .node-rating textarea {
+        width: 100%;
+        height: 60px;
+        padding: 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        resize: vertical;
+        margin-bottom: 8px;
+      }
+
+      .node-rating button {
+        background-color: #4a5568;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 12px;
+        cursor: pointer;
+      }
+
+      .node-rating-history {
+        margin: 15px 0;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 10px;
+      }
+
+      .node-rating-history h4 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #4a5568;
+        font-size: 0.9rem;
+      }
+
+      .rating-item {
+        background-color: #f7fafc;
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+      }
+
+      .rating-item p {
+        margin: 0 0 5px 0;
+      }
+
+      .rating-time {
+        font-size: 0.8rem;
+        color: #718096;
+      }
+
+      /* 节点工具样式 */
+      .node-tools {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 15px;
+      }
+
+      .node-tools button {
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+      }
+
+      .ai-generate-button button {
+        background-color: #6b46c1;
+        color: white;
+        border: none;
+      }
+
+      .ai-generate-button button:hover {
+        background-color: #553c9a;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .image-generate-button button {
+        background-color: #805ad5;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .image-generate-button button:hover {
+        background-color: #6b46c1;
+      }
+
+      /* 生成图像结果样式 */
+      .image-result {
+        max-width: 800px;
+      }
+
+      .generated-image {
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      .generated-image img {
+        max-width: 100%;
+        max-height: 500px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .image-info {
+        margin-top: 20px;
+        background-color: #f7fafc;
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      .image-info h4 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #4a5568;
+      }
+
+      .prompt-info p {
+        margin: 5px 0;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="app-container">
+        <header>
+          <h1>AI Critical Thinking Tool</h1>
+          <div class="header-actions" v-if="!initialMode">
+            <button type="button" @click="generatePathAnalysis" :disabled="isGenerating || userPath.length === 0">
+              {{ isGenerating ? '分析中...' : '分析思考路径' }}
+            </button>
+            <button type="button" @click="showSavePath">保存路径</button>
+            <button type="button" @click="showLoadPath">加载路径</button>
+            <button type="button" @click="showComparePathDialog" :disabled="userPath.length === 0">比较路径</button>
+            <button type="button" @click="exportPath" :disabled="userPath.length === 0">导出</button>
+            <button type="button" @click="importPath">导入</button>
+            <button type="button" @click="showShare" :disabled="userPath.length === 0">分享</button>
+            <button type="button" @click="showComments">评论</button>
+            <button type="button" @click="showImageGenerator" class="image-btn">生成图像</button>
+            <button type="button" @click="autoLayout" class="layout-btn">自动整理</button>
+          </div>
+          <div class="header-actions" v-else>
+            <button type="button" @click="showLoadPath">加载已有思考</button>
+          </div>
+        </header>
+        <!-- 初始输入界面 -->
+        <div v-if="initialMode" class="initial-input-wrapper">
+          <div class="initial-input-container">
+            <h2>请输入您的需求或问题</h2>
+            <div class="input-area">
+              <textarea v-model="userInitialInput" placeholder="例如：我需要一个应用程序来管理我的日常任务和时间安排..."></textarea>
+              <button type="button" @click="processUserInput" :disabled="processingInput">
+                {{ processingInput ? '处理中...' : '开始思考' }}
+              </button>
+            </div>
+            <div class="input-tips">
+              <p>提示：请尽可能详细地描述您的需求，这将帮助我们生成更准确的思考路径。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 思维导图界面 -->
+        <div v-else class="mindmap-wrapper">
+          <div ref="mindmapContainer" class="mindmap-container"></div>
+
+          <!-- 缩略图区域 -->
+          <div class="thumbnails-container" v-if="generatedImages.length > 0">
+            <div class="thumbnails-header">
+              <h4>生成的图像</h4>
+            </div>
+            <div class="thumbnails-scroll">
+              <div v-for="image in generatedImages" :key="image.id" class="thumbnail-item" @click="viewThumbnail(image)">
+                <div class="thumbnail-image">
+                  <img :src="image.url" :alt="'Generated image ' + image.id" :title="formatTime(image.timestamp)">
+                </div>
+                <div class="thumbnail-info">
+                  <span class="thumbnail-date">{{ formatTime(image.timestamp).split(' ')[0] }}</span>
+                  <button type="button" class="thumbnail-delete" @click.stop="deleteImage(image.id)">×</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Context Menu -->
+          <div v-if="showContextMenu" class="context-menu" :style="contextMenuStyle">
+            <div class="context-menu-item" @click="addChildNode">Add Child Node</div>
+            <div class="context-menu-item" @click="editNode">Edit Node</div>
+            <div class="context-menu-item" @click="deleteNode">Delete Node</div>
+            <div class="context-menu-item" @click="resetView">Reset View</div>
+          </div>
+
+          <!-- Node Details Panel -->
+          <div v-if="showNodeDetails" class="node-details" :style="nodeDetailsStyle">
+            <h3>{{ selectedNode.label }}</h3>
+            <p>{{ selectedNode.details }}</p>
+
+            <!-- 节点评价输入框 -->
+            <div class="node-rating">
+              <textarea v-model="nodeRating" placeholder="请评价这个节点的内容..."></textarea>
+              <button type="button" @click="saveNodeRating">提交评价</button>
+            </div>
+
+            <!-- 节点评价历史 -->
+            <div v-if="nodeRatings[selectedNode.id] && nodeRatings[selectedNode.id].length > 0" class="node-rating-history">
+              <h4>评价历史</h4>
+              <div v-for="rating in nodeRatings[selectedNode.id]" :key="rating.id" class="rating-item">
+                <p>{{ rating.text }}</p>
+                <span class="rating-time">{{ formatTime(rating.timestamp) }}</span>
+              </div>
+            </div>
+
+            <div class="node-actions">
+              <button type="button" v-for="(option, index) in selectedNode.options"
+                      :key="index"
+                      @click="selectOption(option)">
+                {{ option.text }}
+              </button>
+            </div>
+
+            <!-- 思考类型按钮 -->
+            <div class="thinking-type-buttons">
+              <button type="button"
+                      class="thinking-type-btn"
+                      :class="{ 'active': selectedThinkingType === '根本原因' }"
+                      @click="selectThinkingType('根本原因')">根本原因</button>
+              <button type="button"
+                      class="thinking-type-btn"
+                      :class="{ 'active': selectedThinkingType === '系统影响' }"
+                      @click="selectThinkingType('系统影响')">系统影响</button>
+              <button type="button"
+                      class="thinking-type-btn"
+                      :class="{ 'active': selectedThinkingType === '潜在机会' }"
+                      @click="selectThinkingType('潜在机会')">潜在机会</button>
+            </div>
+
+            <div class="node-tools">
+              <div v-if="showAIGenerateButton" class="ai-generate-button">
+                <button type="button" @click="showAIGenerateDialog">使用AI生成更多选项</button>
+              </div>
+              <div class="image-generate-button">
+                <button type="button" @click="showImageGenerator">生成图像</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Generate Prompt Dialog -->
+          <div v-if="showAIGeneratePrompt" class="modal-overlay">
+            <div class="modal-content">
+              <h3>生成思考选项</h3>
+              <p>请输入提示词，我们将为您生成多个思考选项。</p>
+              <div class="form-group">
+                <input type="text" v-model="userPrompt" placeholder="例如：如何解决这个问题的不同角度">
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="generateAIOptions" :disabled="isGenerating">
+                  {{ isGenerating ? '生成中...' : '生成选项' }}
+                </button>
+                <button type="button" @click="cancelAIGenerate">取消</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Generated Options Dialog -->
+          <div v-if="showAIOptions" class="modal-overlay">
+            <div class="modal-content">
+              <h3>选择思考选项</h3>
+              <p>以下是基于您的提示生成的思考选项，可以选择多个选项继续探索。</p>
+              <div class="ai-options-list">
+                <div v-for="(option, index) in aiGeneratedOptions"
+                     :key="index"
+                     class="ai-option-item"
+                     :class="{ 'selected': option.selected }"
+                     @click="toggleOptionSelection(option)">
+                  <div class="option-checkbox">
+                    <input type="checkbox" :id="'option-' + index" :checked="option.selected" @click.stop :title="option.text" :aria-label="option.text">
+                  </div>
+                  <div class="option-content">
+                    <h4>{{ option.text }}</h4>
+                    <p>{{ option.details }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="applySelectedOptions" :disabled="!hasSelectedOptions">应用选中项</button>
+                <button type="button" @click="cancelAIGenerate">取消</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Path Analysis Dialog -->
+          <div v-if="showPathAnalysis" class="modal-overlay">
+            <div class="modal-content path-analysis">
+              <h3>思考路径分析</h3>
+              <div class="path-analysis-content">
+                <h4>路径概述</h4>
+                <p>{{ pathAnalysis.summary }}</p>
+
+                <h4>见解</h4>
+                <ul>
+                  <li v-for="(insight, index) in pathAnalysis.insights" :key="index">
+                    {{ insight }}
+                  </li>
+                </ul>
+
+                <h4>建议</h4>
+                <ul>
+                  <li v-for="(recommendation, index) in pathAnalysis.recommendations" :key="index">
+                    {{ recommendation }}
+                  </li>
+                </ul>
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="closePathAnalysis">关闭</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Save Path Dialog -->
+          <div v-if="showSavePathDialog" class="modal-overlay">
+            <div class="modal-content">
+              <h3>保存思考路径</h3>
+              <p>请为您的思考路径输入一个名称。</p>
+              <div class="form-group">
+                <input type="text" v-model="newPathName" placeholder="路径名称">
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="saveCurrentPath">保存</button>
+                <button type="button" @click="cancelSavePath">取消</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Load Path Dialog -->
+          <div v-if="showLoadPathDialog" class="modal-overlay">
+            <div class="modal-content">
+              <h3>加载思考路径</h3>
+              <p>选择要加载的思考路径。</p>
+              <div class="saved-paths-list">
+                <div v-if="savedPaths.length === 0" class="no-paths">
+                  没有保存的路径。请先保存或导入路径。
+                </div>
+                <div v-for="(path, index) in savedPaths" :key="path.id" class="saved-path-item">
+                  <div class="saved-path-info">
+                    <h4>{{ path.name }}</h4>
+                    <p>创建于: {{ formatTime(path.timestamp) }}</p>
+                    <p>节点数: {{ path.path.length }}</p>
+                  </div>
+                  <div class="saved-path-actions">
+                    <button type="button" @click="loadSelectedPath(path)">加载</button>
+                    <button type="button" class="delete-btn" @click="deleteSelectedPath(index)">删除</button>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="cancelLoadPath">取消</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Path Comparison Dialog -->
+          <div v-if="showPathComparisonDialog" class="modal-overlay">
+            <div class="modal-content">
+              <h3>选择要比较的路径</h3>
+              <p>选择一个路径与当前路径进行比较。</p>
+              <div class="saved-paths-list">
+                <div v-if="savedPaths.length === 0" class="no-paths">
+                  没有保存的路径。请先保存或导入路径。
+                </div>
+                <div v-for="path in savedPaths" :key="path.id" class="saved-path-item">
+                  <div class="saved-path-info">
+                    <h4>{{ path.name }}</h4>
+                    <p>创建于: {{ formatTime(path.timestamp) }}</p>
+                    <p>节点数: {{ path.path.length }}</p>
+                  </div>
+                  <div class="saved-path-actions">
+                    <button type="button" @click="compareWithPath(path)">比较</button>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="cancelPathComparison">取消</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Path Comparison Result Dialog -->
+          <div v-if="showPathComparison" class="modal-overlay">
+            <div class="modal-content path-analysis">
+              <h3>路径比较结果</h3>
+              <div class="path-comparison-content">
+                <div class="comparison-header">
+                  <div class="comparison-path">
+                    <h4>当前路径</h4>
+                    <p>节点数: {{ pathComparisonResult.currentPathLength }}</p>
+                  </div>
+                  <div class="comparison-vs">VS</div>
+                  <div class="comparison-path">
+                    <h4>{{ pathComparisonResult.comparisonPathName }}</h4>
+                    <p>节点数: {{ pathComparisonResult.comparisonPathLength }}</p>
+                  </div>
+                </div>
+
+                <div class="comparison-similarity">
+                  <h4>相似度: {{ pathComparisonResult.similarity }}%</h4>
+                  <div class="similarity-bar">
+                    <div class="similarity-fill" :style="{width: pathComparisonResult.similarity + '%'}"></div>
+                  </div>
+                </div>
+
+                <div class="comparison-details">
+                  <div class="comparison-section">
+                    <h4>共同节点 ({{ pathComparisonResult.commonNodes.length }})</h4>
+                    <ul>
+                      <li v-for="(node, index) in pathComparisonResult.commonNodes" :key="'common-'+index">
+                        {{ node }}
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="comparison-section">
+                    <h4>当前路径独有节点 ({{ pathComparisonResult.uniqueCurrentNodes.length }})</h4>
+                    <ul>
+                      <li v-for="(node, index) in pathComparisonResult.uniqueCurrentNodes" :key="'current-'+index">
+                        {{ node }}
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="comparison-section">
+                    <h4>比较路径独有节点 ({{ pathComparisonResult.uniqueComparisonNodes.length }})</h4>
+                    <ul>
+                      <li v-for="(node, index) in pathComparisonResult.uniqueComparisonNodes" :key="'comparison-'+index">
+                        {{ node }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <h4>见解</h4>
+                <ul>
+                  <li v-for="(insight, index) in pathComparisonResult.insights" :key="index">
+                    {{ insight }}
+                  </li>
+                </ul>
+
+                <h4>建议</h4>
+                <ul>
+                  <li v-for="(recommendation, index) in pathComparisonResult.recommendations" :key="index">
+                    {{ recommendation }}
+                  </li>
+                </ul>
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="closePathComparison">关闭</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Share Dialog -->
+          <div v-if="showShareDialog" class="modal-overlay">
+            <div class="modal-content">
+              <h3>分享思考路径</h3>
+              <p>使用以下链接分享您的思考路径。</p>
+              <div class="share-link">
+                <label for="shareLink">分享链接：</label>
+                <input type="text" id="shareLink" readonly :value="shareLink" @click="$event.target.select()" placeholder="分享链接" title="点击选中分享链接">
+              </div>
+              <div class="form-group">
+                <label for="shareComment">添加评论（可选）：</label>
+                <textarea id="shareComment" v-model="shareComment" placeholder="对这个思考路径的评论或说明"></textarea>
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="sharePath">复制链接</button>
+                <button type="button" @click="cancelShare">取消</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comments Dialog -->
+          <div v-if="showCommentsDialog" class="modal-overlay">
+            <div class="modal-content">
+              <h3>评论</h3>
+              <div class="comments-list">
+                <div v-if="comments.length === 0" class="no-comments">
+                  暂无评论。
+                </div>
+                <div v-for="comment in comments" :key="comment.id" class="comment-item">
+                  <div class="comment-header">
+                    <span class="comment-author">{{ comment.author }}</span>
+                    <span class="comment-time">{{ formatTime(comment.timestamp) }}</span>
+                  </div>
+                  <div class="comment-text">{{ comment.text }}</div>
+                </div>
+              </div>
+              <div class="add-comment">
+                <textarea v-model="newComment" placeholder="添加评论..."></textarea>
+                <button type="button" @click="addComment">发布评论</button>
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="closeComments">关闭</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image Generator Dialog -->
+          <div v-if="showImageGenDialog" class="modal-overlay">
+            <div class="modal-content">
+              <h3>生成图像</h3>
+              <p>基于您的思考路径生成图像。</p>
+
+              <div class="form-group">
+                <label for="positivePrompt">正面提示词（来自您的路径节点）：</label>
+                <textarea id="positivePrompt" v-model="positivePrompt" placeholder="正面提示词"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="negativePrompt">反面提示词（来自其他节点）：</label>
+                <textarea id="negativePrompt" v-model="negativePrompt" placeholder="反面提示词"></textarea>
+              </div>
+
+              <div class="modal-actions">
+                <button type="button" @click="generateImage" :disabled="isGeneratingImage">
+                  {{ isGeneratingImage ? '生成中...' : '生成图像' }}
+                </button>
+                <button type="button" @click="closeImageGenerator">取消</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Generated Image Dialog -->
+          <div v-if="showGeneratedImage" class="modal-overlay">
+            <div class="modal-content image-result">
+              <h3>生成的图像</h3>
+              <div class="generated-image">
+                <img :src="generatedImage" alt="生成的图像">
+              </div>
+              <div class="image-info">
+                <h4>使用的提示词</h4>
+                <div class="prompt-info">
+                  <p><strong>正面提示词：</strong> {{ positivePrompt }}</p>
+                  <p><strong>反面提示词：</strong> {{ negativePrompt }}</p>
+                </div>
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="saveGeneratedImage">保存图像</button>
+                <button type="button" @click="closeGeneratedImage">关闭</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enlarged Image Dialog -->
+          <div v-if="showEnlargedImage" class="modal-overlay">
+            <div class="modal-content image-result">
+              <h3>图像详情</h3>
+              <div class="generated-image">
+                <img :src="currentViewingImage.url" alt="放大的图像">
+              </div>
+              <div class="image-info">
+                <h4>使用的提示词</h4>
+                <div class="prompt-info">
+                  <p><strong>正面提示词：</strong> {{ currentViewingImage.positivePrompt }}</p>
+                  <p><strong>反面提示词：</strong> {{ currentViewingImage.negativePrompt }}</p>
+                </div>
+                <p class="image-timestamp">生成时间： {{ formatTime(currentViewingImage.timestamp) }}</p>
+              </div>
+              <div class="modal-actions">
+                <button type="button" @click="deleteImage(currentViewingImage.id)">删除图像</button>
+                <button type="button" @click="closeEnlargedImage">关闭</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Node Dialog -->
+          <div v-if="showEditDialog" class="edit-dialog">
+            <div class="edit-dialog-content">
+              <h3>Edit Node</h3>
+              <div class="form-group">
+                <label for="nodeLabel">Label:</label>
+                <input type="text" id="nodeLabel" v-model="editingNode.label">
+              </div>
+              <div class="form-group">
+                <label for="nodeDetails">Details:</label>
+                <textarea id="nodeDetails" v-model="editingNode.details"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Options:</label>
+                <div v-for="(option, index) in editingNode.options" :key="index" class="option-item">
+                  <input type="text" v-model="option.text" placeholder="Option text">
+                  <button type="button" class="remove-btn" @click="removeOption(index)">×</button>
+                </div>
+                <button type="button" class="add-option-btn" @click="addOption">+ Add Option</button>
+              </div>
+              <div class="edit-dialog-actions">
+                <button type="button" @click="saveNodeEdit">Save</button>
+                <button type="button" @click="cancelNodeEdit">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Script -->
+    <script src="main.js"></script>
+  </body>
+</html>
