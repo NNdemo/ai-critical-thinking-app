@@ -174,25 +174,25 @@ const app = Vue.createApp({
         details: '',
         options: []
       },
-      // 用户路径追踪
+      // User path tracking
       userPath: [],
-      // AI生成状态
+      // AI generation state
       isGenerating: false,
-      // 显示AI生成按钮
+      // Show AI generate button
       showAIGenerateButton: false,
-      // 显示AI生成的选项
+      // Show AI generated options
       showAIOptions: false,
-      // 显示AI生成提示词输入
+      // Show AI generate prompt input
       showAIGeneratePrompt: false,
-      // AI生成的选项
+      // AI generated options
       aiGeneratedOptions: [],
-      // 用户输入的提示词
+      // User input prompt
       userPrompt: '',
-      // 当前选中的思考类型
+      // Current selected thinking type
       selectedThinkingType: null,
-      // 显示路径分析
+      // Show path analysis
       showPathAnalysis: false,
-      // 路径分析内容
+      // Path analysis content
       pathAnalysis: {
         summary: '',
         insights: [],
@@ -253,7 +253,20 @@ const app = Vue.createApp({
       // User initial input
       userInitialInput: '',
       // Processing user input
-      processingInput: false
+      processingInput: false,
+      // Placeholder image URLs for simulating image generation
+      placeholderImages: [
+        'https://picsum.photos/seed/1/512',
+        'https://picsum.photos/seed/2/512',
+        'https://picsum.photos/seed/3/512',
+        'https://picsum.photos/seed/4/512',
+        'https://picsum.photos/seed/5/512',
+        'https://picsum.photos/seed/6/512',
+        'https://picsum.photos/seed/7/512',
+        'https://picsum.photos/seed/8/512',
+        'https://picsum.photos/seed/9/512',
+        'https://picsum.photos/seed/10/512'
+      ]
     };
   },
   mounted() {
@@ -1672,291 +1685,289 @@ const app = Vue.createApp({
 
     // Generate image
     generateImage() {
-      if (!this.positivePrompt.trim()) {
-        alert('Please enter a positive prompt first');
+      // Prevent multiple generation clicks
+      if (this.isGeneratingImage) {
+        console.log('Image generation is already in progress, please wait...');
         return;
       }
 
+      console.log('Starting to generate an image');
       this.isGeneratingImage = true;
-      console.log('Starting image generation...');
-
-      // Simulate image generation
+      
+      // Ensure sufficient delay to prevent DOM operation conflicts
       setTimeout(() => {
-        // In a real application, this would call a text-to-image API
-        // Here we use a random image to simulate the result
-        const imageSize = 512;
-        const randomId = Math.floor(Math.random() * 1000);
-        const imageUrl = `https://picsum.photos/seed/${randomId}/${imageSize}`;
-        console.log('Image URL generated:', imageUrl);
-
-        // Make sure a node is selected
-        if (!this.selectedNode || !this.selectedNode.id) {
-          alert('Please select a node first');
-          this.isGeneratingImage = false;
-          return;
-        }
-
-        // Create new image object
-        const newImage = {
-          id: `img_${Date.now()}`,
-          url: imageUrl,
-          positivePrompt: this.positivePrompt,
-          negativePrompt: this.negativePrompt,
-          timestamp: new Date().toISOString(),
-          pathNodeIds: [],  // No longer dependent on user path
-          sourceNodeId: this.selectedNode.id // Add source node ID
-        };
-        console.log('New image object created:', newImage);
-
-        // Add to image list
-        this.generatedImages.unshift(newImage);
-        this.generatedImage = imageUrl;
-        console.log('Current image list length:', this.generatedImages.length);
-
-        // Save to local storage
         try {
+          // Generate a unique ID for the image
+          const imageId = Date.now().toString();
+          
+          // Create a random image URL (simulating AI generation)
+          // In production, this would call an actual image generation API
+          const randomImageIndex = Math.floor(Math.random() * this.placeholderImages.length);
+          const imageUrl = this.placeholderImages[randomImageIndex];
+          
+          console.log('Generated image URL:', imageUrl);
+          
+          // Create image object
+          const newImage = {
+            id: imageId,
+            url: imageUrl,
+            sourceNodeId: this.selectedNode.id,
+            positivePrompt: this.positivePrompt,
+            negativePrompt: this.negativePrompt,
+            timestamp: new Date().toISOString()
+          };
+          
+          // First save to global state and update localStorage
+          this.generatedImages.push(newImage);
+          // Save to local storage
           localStorage.setItem('generatedImages', JSON.stringify(this.generatedImages));
-          console.log('Image list saved to local storage');
-        } catch (e) {
-          console.error('Failed to save generated images to localStorage:', e);
-        }
-
-        // Check if image is available
-        window.customJointUtils.checkImageLoaded(imageUrl, (isLoaded) => {
-          if (isLoaded) {
-            console.log('Image loaded successfully, adding to node');
-            // Add image thumbnail node for current node
+          
+          console.log('Image count after generation:', this.generatedImages.length);
+          
+          // Use longer delay and multi-layer nested setTimeout to ensure DOM operation sequence
+          setTimeout(() => {
+            // First handle graph structure updates - this part doesn't involve Vue templates
             this.addImageThumbnailNode(newImage);
-          } else {
-            console.error('Image loading failed:', imageUrl);
-            alert('Image loading failed, please try generating again');
-          }
-        });
-
-        // Force view update
-        this.$nextTick(() => {
-          // Ensure thumbnails container is visible
-          const thumbnailsContainer = document.getElementById('thumbnails-container');
-          if (thumbnailsContainer) {
-            thumbnailsContainer.style.display = 'block';
-            thumbnailsContainer.style.visibility = 'visible';
-            thumbnailsContainer.style.opacity = '1';
-            console.log('Thumbnails container set to visible');
-
-            // Force update thumbnail content
-            const scrollContainer = thumbnailsContainer.querySelector('.thumbnails-scroll');
-            if (scrollContainer) {
-              // Clear and re-add all images
-              scrollContainer.innerHTML = '';
-
-              // 手动创建缩略图元素
-              this.generatedImages.forEach(image => {
-                const thumbnailItem = document.createElement('div');
-                thumbnailItem.className = 'thumbnail-item';
-                thumbnailItem.onclick = () => this.viewThumbnail(image);
-
-                const thumbnailImage = document.createElement('div');
-                thumbnailImage.className = 'thumbnail-image';
-
-                const img = document.createElement('img');
-                img.src = image.url;
-                img.alt = 'Ad visual ' + image.id;
-                img.title = this.formatTime(image.timestamp);
-
-                thumbnailImage.appendChild(img);
-                thumbnailItem.appendChild(thumbnailImage);
-
-                const thumbnailInfo = document.createElement('div');
-                thumbnailInfo.className = 'thumbnail-info';
-
-                const dateSpan = document.createElement('span');
-                dateSpan.className = 'thumbnail-date';
-                dateSpan.textContent = this.formatTime(image.timestamp).split(' ')[0];
-
-                const deleteButton = document.createElement('button');
-                deleteButton.type = 'button';
-                deleteButton.className = 'thumbnail-delete';
-                deleteButton.textContent = '\u00D7'; // × is the multiplication sign (×)
-                deleteButton.onclick = (e) => {
-                  e.stopPropagation();
-                  this.deleteImage(image.id);
-                };
-
-                thumbnailInfo.appendChild(dateSpan);
-                thumbnailInfo.appendChild(deleteButton);
-                thumbnailItem.appendChild(thumbnailInfo);
-
-                scrollContainer.appendChild(thumbnailItem);
+            
+            // Then use delay to update thumbnails in the DOM
+            setTimeout(() => {
+              // Update UI state
+              this.generatedImage = imageUrl;
+              this.showImageGenDialog = false;
+              this.isGeneratingImage = false;
+              
+              // Separate Vue updates and DOM operations
+              this.$nextTick(() => {
+                // Ensure Vue update rendering completes before updating DOM
+                setTimeout(() => {
+                  // Use safe DOM update method
+                  this.safeUpdateThumbnailsContainer();
+                }, 300);
               });
-
-              console.log('Manually created', this.generatedImages.length, 'thumbnails');
-            }
-          }
-        });
-
-        this.isGeneratingImage = false;
-        this.showImageGenDialog = false;
-        this.showGeneratedImage = true;
-        console.log('Image generation completed');
-      }, 2000);
+            }, 200);
+          }, 200);
+        } catch (error) {
+          console.error('Error generating image:', error);
+          this.isGeneratingImage = false;
+        }
+      }, 100);
     },
 
     // Add image thumbnail node for a node
     addImageThumbnailNode(image) {
-      // Get source node ID
-      const sourceNodeId = image.sourceNodeId || this.selectedNode.id;
-      const sourceNode = mindMapData[sourceNodeId];
-
-      if (!sourceNode) {
-        console.error('Source node not found:', sourceNodeId);
-        return;
-      }
-
-      // Create image node ID
-      const imageNodeId = `image_node_${image.id}`;
-
-      // Create image node data
-      mindMapData[imageNodeId] = {
-        id: imageNodeId,
-        label: 'Generated Ad Visual',
-        details: `基于“${sourceNode.label}”生成的图像\n\n正面提示词: ${image.positivePrompt}\n反面提示词: ${image.negativePrompt}`,
-        options: [],
-        imageUrl: image.url,
-        timestamp: image.timestamp
-      };
-
-      // If source node doesn't have options property, create one
-      if (!sourceNode.options) {
-        sourceNode.options = [];
-      }
-
-      // Add option to source node
-      sourceNode.options.push({
-        id: `option_to_image_${image.id}`,
-        text: 'Generated Ad Visual',
-        nextNode: imageNodeId
-      });
-
-      // Get source node element
-      const sourceElement = this.graph.getCell(sourceNodeId);
-      if (sourceElement) {
-        // Get source node position and level
-        const sourcePosition = sourceElement.position();
-        const sourceLevel = sourceElement.get('level') || 0;
-
-        // Create image node with special style
-        const imageNode = this.createImageNodeShape(
-          imageNodeId,
-          'Generated Ad Visual',
-          sourcePosition.x + 200,
-          sourcePosition.y + 100,
-          sourceLevel + 1,
-          image.url
-        );
-
-        // Set level
-        imageNode.set('level', sourceLevel + 1);
-
-        // Create link
-        const link = this.createLink(sourceNodeId, imageNodeId);
-
-        // Add to graph
-        this.graph.addCells([imageNode, link]);
-
-        // Update selected node options
-        if (sourceNodeId === this.selectedNode.id) {
-          this.selectedNode.options = sourceNode.options;
+      try {
+        // Validate image object
+        if (!image || !image.url) {
+          console.error('Invalid image object provided to addImageThumbnailNode', image);
+          return;
         }
+
+        // Get source node ID
+        const sourceNodeId = image.sourceNodeId || this.selectedNode.id;
+        if (!sourceNodeId) {
+          console.error('No source node ID found for image', image.id);
+          return;
+        }
+
+        const sourceNode = mindMapData[sourceNodeId];
+        if (!sourceNode) {
+          console.error('Source node not found:', sourceNodeId);
+          return;
+        }
+
+        // Create image node ID
+        const imageNodeId = `image_node_${image.id}`;
+
+        // Check if node with same ID already exists
+        if (mindMapData[imageNodeId]) {
+          console.log('Image node already exists, skipping creation:', imageNodeId);
+          return;
+        }
+
+        // Create image node data - use deep copy to avoid reference issues
+        mindMapData[imageNodeId] = {
+          id: imageNodeId,
+          label: 'Generated Ad Visual',
+          details: `Based on "${sourceNode.label}" generated image\n\nPositive Prompt: ${image.positivePrompt}\nNegative Prompt: ${image.negativePrompt}`,
+          options: [],
+          imageUrl: image.url,
+          timestamp: image.timestamp
+        };
+
+        // If source node doesn't have options property, create one
+        if (!sourceNode.options) {
+          sourceNode.options = [];
+        }
+
+        // Add option to source node, check to avoid duplicates
+        const optionExists = sourceNode.options.some(opt => opt.nextNode === imageNodeId);
+        if (!optionExists) {
+          sourceNode.options.push({
+            id: `option_to_image_${image.id}`,
+            text: 'Generated Ad Visual',
+            nextNode: imageNodeId
+          });
+        }
+
+        // Get source node element
+        const sourceElement = this.graph.getCell(sourceNodeId);
+        if (sourceElement) {
+          // Get source node position and level
+          const sourcePosition = sourceElement.position();
+          const sourceLevel = sourceElement.get('level') || 0;
+
+          // Create image node with special style
+          const imageNode = this.createImageNodeShape(
+            imageNodeId,
+            'Generated Ad Visual',
+            sourcePosition.x + 200,
+            sourcePosition.y + 100,
+            sourceLevel + 1,
+            image.url
+          );
+
+          // Set level
+          imageNode.set('level', sourceLevel + 1);
+
+          // Create link
+          const link = this.createLink(sourceNodeId, imageNodeId);
+
+          // Check if link already exists
+          const existingLinks = this.graph.getLinks().filter(l => 
+            l.get('source').id === sourceNodeId && l.get('target').id === imageNodeId
+          );
+
+          // Add to graph - only add if node and link don't already exist
+          if (!this.graph.getCell(imageNodeId) && existingLinks.length === 0) {
+            this.graph.addCells([imageNode, link]);
+          } else {
+            console.log('Image node or link already exists in graph, skipping addition');
+          }
+
+          // Update selected node options
+          if (sourceNodeId === this.selectedNode.id) {
+            this.selectedNode.options = JSON.parse(JSON.stringify(sourceNode.options));
+          }
+        }
+      } catch (error) {
+        console.error('Error in addImageThumbnailNode:', error);
       }
     },
 
     // Create image node shape
-    createImageNodeShape(id, label, x, y, _level = 0, imageUrl) {
-      // Choose color based on level
-      const fillColor = '#9c27b0'; // Purple for image nodes
-      const strokeColor = '#7b1fa2';
+    createImageNodeShape(id, label, x, y, level = 0, imageUrl) {
+      try {
+        // Choose color based on level
+        const fillColor = '#9c27b0'; // Purple for image nodes
+        const strokeColor = '#7b1fa2';
 
-      console.log('Creating image node:', id, 'Image URL:', imageUrl);
+        console.log('Creating image node:', id, 'Image URL:', imageUrl);
 
-      // Use standard rectangle and SVG image
-      const imageNode = new joint.shapes.standard.Rectangle({
-        id: id,
-        position: { x, y },
-        size: { width: 160, height: 120 },
-        attrs: {
-          body: {
-            fill: fillColor,
-            stroke: strokeColor,
-            rx: 10,
-            ry: 10
-          },
-          label: {
-            text: label,
-            fill: 'white',
-            fontSize: 14,
-            fontWeight: 'bold',
-            textWrap: {
-              width: 150,
-              height: 20,
-              ellipsis: true
+        // Use standard rectangle and SVG image
+        const imageNode = new joint.shapes.standard.Rectangle({
+          id: id,
+          position: { x, y },
+          size: { width: 160, height: 120 },
+          attrs: {
+            body: {
+              fill: fillColor,
+              stroke: strokeColor,
+              rx: 10,
+              ry: 10
             },
-            refY: 0.15, // Move text to the top
-            textVerticalAnchor: 'top'
-          }
-        },
-        // Use custom markup to include image
-        markup: [
-          {
-            tagName: 'rect',
-            selector: 'body',
+            label: {
+              text: label,
+              fill: 'white',
+              fontSize: 14,
+              fontWeight: 'bold',
+              textWrap: {
+                width: 150,
+                height: 20,
+                ellipsis: true
+              },
+              refY: 0.15, // Move text to the top
+              textVerticalAnchor: 'top'
+            }
           },
-          {
-            tagName: 'text',
-            selector: 'label',
-          },
-          {
-            tagName: 'image',
-            selector: 'image',
+          // Use custom markup to include image
+          markup: [
+            {
+              tagName: 'rect',
+              selector: 'body',
+            },
+            {
+              tagName: 'text',
+              selector: 'label',
+            },
+            {
+              tagName: 'image',
+              selector: 'image',
+            }
+          ]
+        });
+
+        // Set image properties
+        imageNode.attr({
+          image: {
+            'xlink:href': imageUrl,
+            width: 120,
+            height: 70,
+            x: 20,
+            y: 35,
+            preserveAspectRatio: 'xMidYMid meet'
           }
-        ]
-      });
+        });
 
-      // Set image properties
-      imageNode.attr({
-        image: {
-          'xlink:href': imageUrl,
-          width: 120,
-          height: 70,
-          x: 20,
-          y: 35,
-          preserveAspectRatio: 'xMidYMid meet'
-        }
-      });
+        // Add custom property to store image URL
+        imageNode.prop('imageUrl', imageUrl);
 
-      // Add custom property to store image URL
-      imageNode.prop('imageUrl', imageUrl);
-
-      return imageNode;
+        return imageNode;
+      } catch (error) {
+        console.error('Error creating image node shape:', error);
+        // Return a basic node as fallback
+        return new joint.shapes.standard.Rectangle({
+          id: id,
+          position: { x, y },
+          size: { width: 160, height: 120 },
+          attrs: {
+            body: {
+              fill: '#cccccc',
+              stroke: '#999999'
+            },
+            label: {
+              text: 'Error: ' + label,
+              fill: 'white'
+            }
+          }
+        });
+      }
     },
 
     // Save generated image
     saveGeneratedImage() {
-      // In a real application, this should provide download functionality
-      // Here we simulate the download process
-      const link = document.createElement('a');
-      link.href = this.generatedImage;
-      link.download = `ai-advertising-visual-${Date.now()}.jpg`;
-      link.click();
+      try {
+        // In a real application, this should provide download functionality
+        // Here we simulate the download process
+        const link = document.createElement('a');
+        link.href = this.generatedImage;
+        link.download = `ai-advertising-visual-${Date.now()}.jpg`;
+        link.click();
+      } catch (error) {
+        console.error('Error saving generated image:', error);
+        alert('Failed to save image. Please try again.');
+      }
     },
 
     // Close image generator dialog
     closeImageGenerator() {
       this.showImageGenDialog = false;
+      this.isGeneratingImage = false; // 确保重置生成状态
     },
 
     // Close generated image
-    closeGeneratedImage() {
-      this.showGeneratedImage = false;
+    closeEnlargedImage() {
+      this.showEnlargedImage = false;
+      this.currentViewingImage = null;
     },
 
     // Load generated images
@@ -2718,6 +2729,80 @@ const app = Vue.createApp({
 
       // 应用平移
       this.paper.translate(tx, ty);
+    },
+
+    // Safe method to update thumbnails container
+    safeUpdateThumbnailsContainer() {
+      console.log('Safely updating thumbnails container');
+      try {
+        // Find the thumbnails container
+        let thumbnailsContainer = document.getElementById('thumbnails-container');
+        
+        // If thumbnails container doesn't exist yet, create it
+        if (!thumbnailsContainer) {
+          console.log('Thumbnails container not found, creating one');
+          thumbnailsContainer = document.createElement('div');
+          thumbnailsContainer.id = 'thumbnails-container';
+          thumbnailsContainer.style.display = 'flex';
+          thumbnailsContainer.style.flexWrap = 'wrap';
+          thumbnailsContainer.style.gap = '10px';
+          thumbnailsContainer.style.padding = '10px';
+          thumbnailsContainer.style.background = 'rgba(0,0,0,0.5)';
+          thumbnailsContainer.style.borderRadius = '5px';
+          
+          // Find the appropriate parent element to append to
+          const appElement = document.querySelector('#app') || document.body;
+          appElement.appendChild(thumbnailsContainer);
+        }
+        
+        // Clear existing thumbnails
+        thumbnailsContainer.innerHTML = '';
+        
+        // Make the container visible
+        thumbnailsContainer.style.display = 'flex';
+        
+        // Add thumbnails for each generated image
+        this.generatedImages.forEach((image, index) => {
+          // Create thumbnail element
+          const thumbnail = document.createElement('div');
+          thumbnail.className = 'image-thumbnail';
+          thumbnail.dataset.imageId = image.id;
+          thumbnail.style.width = '100px';
+          thumbnail.style.height = '100px';
+          thumbnail.style.overflow = 'hidden';
+          thumbnail.style.borderRadius = '5px';
+          thumbnail.style.cursor = 'pointer';
+          
+          // Create image element
+          const img = document.createElement('img');
+          img.src = image.url;
+          img.alt = `Generated image ${index + 1}`;
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.objectFit = 'cover';
+          
+          // Handle load errors
+          img.onerror = () => {
+            img.src = 'https://via.placeholder.com/100?text=Error';
+            console.error('Failed to load image:', image.url);
+          };
+          
+          // Add click event to enlarge image
+          thumbnail.addEventListener('click', () => {
+            this.viewEnlargedImage(image);
+          });
+          
+          // Append image to thumbnail
+          thumbnail.appendChild(img);
+          
+          // Append thumbnail to container
+          thumbnailsContainer.appendChild(thumbnail);
+        });
+        
+        console.log(`Created ${this.generatedImages.length} thumbnails successfully`);
+      } catch (error) {
+        console.error('Error updating thumbnails container:', error);
+      }
     }
   }
 });
